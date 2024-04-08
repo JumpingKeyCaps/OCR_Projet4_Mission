@@ -1,11 +1,11 @@
-package com.aura.ui.login
+package com.aura.main.ui.login
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.aura.databinding.ActivityLoginBinding
-import com.aura.ui.home.HomeActivity
+import com.aura.main.ui.home.HomeActivity
 
 /**
  * The login activity for the app.

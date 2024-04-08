@@ -1,4 +1,4 @@
-package com.aura.ui.transfer
+package com.aura.main.ui.transfer
 
 import android.app.Activity
 import android.os.Bundle
