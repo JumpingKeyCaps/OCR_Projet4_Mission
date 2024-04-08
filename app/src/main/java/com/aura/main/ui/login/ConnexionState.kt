@@ -7,6 +7,7 @@ enum class ConnexionState {
     INITIAL,
     CHAMPS_REMPLIS,
     ERREUR_CONNEXION,
+    CONNEXION_ECHEC,
     CONNEXION_EN_COURS,
     CONNEXION_REUSSIE
 }
