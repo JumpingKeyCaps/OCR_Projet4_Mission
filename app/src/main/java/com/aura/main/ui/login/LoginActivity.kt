@@ -73,7 +73,7 @@ class LoginActivity : AppCompatActivity(){
    */
   fun setupViewListeners(){
     //Set the button login listener.
-    binding.login.setOnClickListener { loginViewModel.seConnecter() }
+    binding.login.setOnClickListener { loginViewModel.seConnecter(binding.identifier.toString().trim(),binding.password.toString().trim()) }
 
     //add text watcher to our views
     binding.identifier.addTextChangedListener(textWatcher)
@@ -99,47 +99,66 @@ class LoginActivity : AppCompatActivity(){
 
           ConnexionState.INITIAL -> {
             // Ne rien faire, l'utilisateur n'a pas encore saisi ses informations
-            message = "Champ remplis NOPE  !"
-            binding.login.isEnabled = false
+            withContext(Dispatchers.Main) {
+              binding.login.isEnabled = false
+            }
           }
 
           ConnexionState.CHAMPS_REMPLIS -> {
-            message = "Champ remplis OK  !"
-            binding.login.isEnabled = true
+            withContext(Dispatchers.Main) {
+              binding.login.isEnabled = true
+            }
           }
 
           ConnexionState.ERREUR_CONNEXION -> {
             // Afficher un message d'erreur
-            message = "Une erreur est survenue lors de la connexion."
+            message = "A network error occurred while connecting."
+            binding.login.isEnabled = false
+            //on execute sur le main thread
+            withContext(Dispatchers.Main) {
+              Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
+              binding.identifier.text.clear()
+              binding.password.text.clear()
+
+            }
+
           }
 
           ConnexionState.CONNEXION_EN_COURS -> {
-            message = "Connexion en cours ..."
-            // Afficher un indicateur de chargement
-            binding.loading.visibility = View.VISIBLE
-            binding.login.isEnabled = false
+            message = "Connection in progress ..."
+            withContext(Dispatchers.Main) {
+              Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
+              // Afficher un indicateur de chargement
+              binding.loading.visibility = View.VISIBLE
+              binding.login.isEnabled = false
+            }
           }
+
+          ConnexionState.CONNEXION_ECHEC -> {
+            message = "Login fail ! Wrong Password or ID "
+            withContext(Dispatchers.Main) {
+              Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
+              // Afficher un indicateur de chargement
+              binding.loading.visibility = View.VISIBLE
+              binding.login.isEnabled = false
+            }
+          }
+
 
           ConnexionState.CONNEXION_REUSSIE -> {
-            // Cacher l'indicateur de chargement
-            binding.loading.visibility = View.GONE
             // Afficher un message de succès
-            message = "Connexion réussie !"
+            message = "Successful connection !"
             // Naviguer vers la page d'accueil
-            val intent = Intent(this@LoginActivity, HomeActivity::class.java)
-            startActivity(intent)
-            finish()
+            withContext(Dispatchers.Main) {
+              // Cacher l'indicateur de chargement
+              binding.loading.visibility = View.GONE
+              Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
+              val intent = Intent(this@LoginActivity, HomeActivity::class.java)
+              startActivity(intent)
+              finish()
+            }
           }
-
-
         }
-
-
-        //on execute sur le main thread
-        withContext(Dispatchers.Main) {
-          Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
-        }
-
       }
     }
   }
