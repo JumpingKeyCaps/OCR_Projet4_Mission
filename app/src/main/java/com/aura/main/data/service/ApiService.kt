@@ -1,12 +1,18 @@
 package com.aura.main.data.service
 
+import com.aura.main.model.home.UserAccount
 import com.aura.main.model.login.LoginRequest
 import com.aura.main.model.login.LoginResponse
 import com.aura.main.model.transfer.TransferRequest
 import com.aura.main.model.transfer.TransferResponse
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
+/**
+ * The Api Service Interface to communicate with the server.
+ */
 interface ApiService {
 
     /**
@@ -33,8 +39,16 @@ interface ApiService {
     suspend fun transfer(@Body transferRequest: TransferRequest): TransferResponse
 
 
-
-
+    /**
+     * Method to get all data user's accounts. (GET)
+     *
+     * (Use of "suspend" to allow asynchronous call inside coroutine)
+     *
+     * @param id the id of the user.
+     * @return a list of UserAccount objects with all the data of the account.
+     */
+    @GET("/accounts/{id}")
+    suspend fun getUserAccounts(@Path("id") id: String): List<UserAccount>
 
 
 }
