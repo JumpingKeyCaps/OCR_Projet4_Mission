@@ -1,8 +1,8 @@
 package com.aura.main.data.repository
 
 import com.aura.main.data.service.AuraApiService
-import com.aura.main.model.LoginRequest
-import com.aura.main.model.LoginResponse
+import com.aura.main.model.login.LoginRequest
+import com.aura.main.model.login.LoginResponse
 import javax.inject.Inject
 
 class LoginRepository @Inject constructor(private val auraApiService: AuraApiService) {
