@@ -38,6 +38,9 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
             _etat.value = ConnexionState.CONNEXION_EN_COURS
 
 
+            //todo REMOVE THAT IT ONLY TO TEST ___________________
+            delay(10000)
+            //todo --------------------------------------------------
             try {
                 val loginResponse = loginRepository.login(LoginRequest(identifier, motDePasse))
 
@@ -54,7 +57,7 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
             } catch (e: Exception) {
                 // Handle network errors, server errors, etc.
                 _etat.value = ConnexionState.ERREUR_CONNEXION
-                Log.d("connectMMM", "seConnecter: erreur rsx !")
+                Log.d("connectMMM", "seConnecter: erreur rsx ! \n"+e.message+"\n"+e.toString())
             }
 
 
