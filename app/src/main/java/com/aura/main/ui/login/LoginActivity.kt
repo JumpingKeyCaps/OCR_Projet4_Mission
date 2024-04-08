@@ -2,40 +2,157 @@ package com.aura.main.ui.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import com.aura.databinding.ActivityLoginBinding
 import com.aura.main.ui.home.HomeActivity
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * The login activity for the app.
  */
-class LoginActivity : AppCompatActivity()
-{
+class LoginActivity : AppCompatActivity(){
 
   /**
    * The binding for the login layout.
    */
   private lateinit var binding: ActivityLoginBinding
+  /**
+   * The login ViewModel to use with this activity.
+   */
+  private val loginViewModel: LoginViewModel by viewModels() // Access ViewModel instance
 
-  override fun onCreate(savedInstanceState: Bundle?)
-  {
+
+  /**
+   * The TextWatcher used to watch the data enter by the user
+   * and update the general state of the screen.
+   */
+  private val textWatcher = object : TextWatcher {
+    override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+      updateLoginButtonState() // call  to update the button state
+    }
+    override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) { }
+    override fun afterTextChanged(s: Editable) { }
+  }
+
+
+  /**
+   * Life Cycle method : onCreate()
+   * Called when the activity is create.
+   * @param savedInstanceState the bundle of the saved activity state.
+   */
+  override fun onCreate(savedInstanceState: Bundle?){
     super.onCreate(savedInstanceState)
 
+    //get the viewbinder and set the content with his root layout
     binding = ActivityLoginBinding.inflate(layoutInflater)
     setContentView(binding.root)
 
-    val login = binding.login
-    val loading = binding.loading
+    //Setup all listeners
+    setupViewListeners()
 
-    login.setOnClickListener {
-      loading.visibility = View.VISIBLE
+    //Collect current Login State from the Viewmodel
+    updateCurrentLoginState(loginViewModel)
 
-      val intent = Intent(this@LoginActivity, HomeActivity::class.java)
-      startActivity(intent)
+  }
 
-      finish()
+  /**
+   * Method to setup all the used views listener in the activity.
+   */
+  fun setupViewListeners(){
+    //Set the button login listener.
+    binding.login.setOnClickListener { loginViewModel.seConnecter() }
+
+    //add text watcher to our views
+    binding.identifier.addTextChangedListener(textWatcher)
+    binding.password.addTextChangedListener(textWatcher)
+  }
+
+  /**
+   * Method to collect the current login state and update all views in consequences.
+   * @param loginViewModel the ViewModel to use to collect the state flow
+   */
+  fun updateCurrentLoginState(loginViewModel: LoginViewModel){
+
+    //on collect notre StateFlow d'etat d'ecran actuel depuis le viewmodel
+    //on lance une coroutine
+    CoroutineScope(Dispatchers.Main).launch {
+      // Collect du flow de l'état depuis le ViewModel
+      loginViewModel.etat.collect { connexionState ->
+
+        var message:String? = null
+
+        // Mettre à jour l'interface utilisateur en fonction de l'état de connexion
+        when (connexionState) {
+
+          ConnexionState.INITIAL -> {
+            // Ne rien faire, l'utilisateur n'a pas encore saisi ses informations
+            message = "Champ remplis NOPE  !"
+            binding.login.isEnabled = false
+          }
+
+          ConnexionState.CHAMPS_REMPLIS -> {
+            message = "Champ remplis OK  !"
+            binding.login.isEnabled = true
+          }
+
+          ConnexionState.ERREUR_CONNEXION -> {
+            // Afficher un message d'erreur
+            message = "Une erreur est survenue lors de la connexion."
+          }
+
+          ConnexionState.CONNEXION_EN_COURS -> {
+            message = "Connexion en cours ..."
+            // Afficher un indicateur de chargement
+            binding.loading.visibility = View.VISIBLE
+            binding.login.isEnabled = false
+          }
+
+          ConnexionState.CONNEXION_REUSSIE -> {
+            // Cacher l'indicateur de chargement
+            binding.loading.visibility = View.GONE
+            // Afficher un message de succès
+            message = "Connexion réussie !"
+            // Naviguer vers la page d'accueil
+            val intent = Intent(this@LoginActivity, HomeActivity::class.java)
+            startActivity(intent)
+            finish()
+          }
+
+
+        }
+
+
+        //on execute sur le main thread
+        withContext(Dispatchers.Main) {
+          Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
+        }
+
+      }
     }
   }
+
+  /**
+   * Method to update the state of the login button
+   * this method call the viewmodel methode to verify if all condition to login is ok
+   * to update the current screen state (and unlock the button)
+   */
+  private fun updateLoginButtonState() = loginViewModel.verifierChamps(binding.identifier.text.toString().trim(), binding.password.text.toString().trim())
+
+
+
+
+
+
 
 }
