@@ -44,6 +44,7 @@ dependencies {
   implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
   implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+  implementation ("androidx.activity:activity-ktx:1.8.2")
 
 
   testImplementation("junit:junit:4.13.2")
