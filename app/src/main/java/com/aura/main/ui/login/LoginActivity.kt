@@ -113,10 +113,11 @@ class LoginActivity : AppCompatActivity(){
           ConnexionState.ERREUR_CONNEXION -> {
             // Afficher un message d'erreur
             message = "A network error occurred while connecting."
-            binding.login.isEnabled = false
             //on execute sur le main thread
             withContext(Dispatchers.Main) {
               Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
+              binding.loading.visibility = View.GONE
+              binding.login.isEnabled = false
               binding.identifier.text.clear()
               binding.password.text.clear()
 
@@ -136,11 +137,14 @@ class LoginActivity : AppCompatActivity(){
 
           ConnexionState.CONNEXION_ECHEC -> {
             message = "Login fail ! Wrong Password or ID "
+            //on execute sur le main thread
             withContext(Dispatchers.Main) {
               Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
-              // Afficher un indicateur de chargement
-              binding.loading.visibility = View.VISIBLE
+              binding.loading.visibility = View.GONE
               binding.login.isEnabled = false
+              binding.identifier.text.clear()
+              binding.password.text.clear()
+
             }
           }
 
