@@ -5,10 +5,7 @@ import com.aura.main.model.LoginResponse
 import retrofit2.Retrofit
 import javax.inject.Inject
 
-/**
- * Service to communicate with the server.
- */
-class LoginApiService  @Inject constructor(private val retrofit: Retrofit) : ApiService {
+class AuraApiService  @Inject constructor(private val retrofit: Retrofit) : ApiService {
 
     override suspend fun login(loginRequest: LoginRequest): LoginResponse {
         return apiService.login(loginRequest)
