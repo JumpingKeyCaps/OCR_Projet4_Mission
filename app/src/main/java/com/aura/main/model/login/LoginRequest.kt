@@ -1,4 +1,4 @@
-package com.aura.main.model
+package com.aura.main.model.login
 
 /**
  * Data class who represent a LoginRequest data.
