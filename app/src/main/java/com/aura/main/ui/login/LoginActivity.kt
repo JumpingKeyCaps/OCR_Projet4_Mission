@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import com.aura.databinding.ActivityLoginBinding
 import com.aura.main.ui.home.HomeActivity
 import androidx.lifecycle.repeatOnLifecycle
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,6 +22,7 @@ import kotlinx.coroutines.withContext
 /**
  * The login activity for the app.
  */
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity(){
 
   /**
