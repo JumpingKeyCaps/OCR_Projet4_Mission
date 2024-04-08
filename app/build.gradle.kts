@@ -5,7 +5,7 @@ plugins {
 
 android {
   namespace = "com.aura"
-  compileSdk = 33
+  compileSdk = 34
 
   defaultConfig {
     applicationId = "com.aura"
