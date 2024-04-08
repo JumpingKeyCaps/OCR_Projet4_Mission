@@ -14,10 +14,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+
     @Provides
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://votre-url.com")
+            .baseUrl(AppConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
