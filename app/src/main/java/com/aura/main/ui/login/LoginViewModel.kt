@@ -15,8 +15,8 @@ class LoginViewModel : ViewModel()  {
     private val _etat = MutableStateFlow(ConnexionState.INITIAL)
     val etat: StateFlow<ConnexionState> = _etat
 
-    fun verifierChamps(email: String, motDePasse: String) {
-        if (email.isNotEmpty() && motDePasse.isNotEmpty()) {
+    fun verifierChamps(identifier: String, motDePasse: String) {
+        if (identifier.isNotEmpty() && motDePasse.isNotEmpty()) {
             //champ de saisie Ok !
             _etat.value = ConnexionState.CHAMPS_REMPLIS
         } else {
@@ -32,7 +32,7 @@ class LoginViewModel : ViewModel()  {
             // Simuler une connexion (could be replaced with actual network call)
 
             //todochange by apicall
-            delay(2000)
+            delay(15000)
 
             if (true) {
                 // Success !
