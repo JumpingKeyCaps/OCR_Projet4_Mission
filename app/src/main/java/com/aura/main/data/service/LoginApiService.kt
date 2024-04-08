@@ -10,8 +10,8 @@ import javax.inject.Inject
  */
 class LoginApiService  @Inject constructor(private val retrofit: Retrofit) : ApiService {
 
-    override suspend fun login(user: LoginRequest): LoginResponse {
-        return apiService.login(user)
+    override suspend fun login(loginRequest: LoginRequest): LoginResponse {
+        return apiService.login(loginRequest)
     }
 
     private val apiService by lazy { retrofit.create(ApiService::class.java) }
