@@ -5,7 +5,9 @@ import com.aura.main.model.login.LoginRequest
 import com.aura.main.model.login.LoginResponse
 import com.aura.main.model.transfer.TransferRequest
 import com.aura.main.model.transfer.TransferResponse
+import com.google.gson.Gson
 import retrofit2.Retrofit
+import retrofit2.Response
 import javax.inject.Inject
 
 class AuraApiService  @Inject constructor(private val retrofit: Retrofit) : ApiService {
@@ -22,16 +24,17 @@ class AuraApiService  @Inject constructor(private val retrofit: Retrofit) : ApiS
      * @param loginRequest a login request object.
      * @return  a LoginResponse object with the login access state.
      */
-    override suspend fun login(loginRequest: LoginRequest): LoginResponse {
+     override suspend fun login(loginRequest: LoginRequest): Response<LoginResponse> {
         return apiService.login(loginRequest)
     }
+
     /**
      * Methode to do a transfer.
      *
      * @param transferRequest a transfer request object.
      * @return  a TransferResponse object with the transfer result.
      */
-    override suspend fun transfer(transferRequest: TransferRequest): TransferResponse {
+    override suspend fun transfer(transferRequest: TransferRequest): Response<TransferResponse> {
         return apiService.transfer(transferRequest)
     }
 
@@ -41,9 +44,10 @@ class AuraApiService  @Inject constructor(private val retrofit: Retrofit) : ApiS
      * @param id of the user.
      * @return  a UserAccount object list.
      */
-    override suspend fun getUserAccounts(id: String): List<UserAccount> {
+    override suspend fun getUserAccounts(id: String): Response<List<UserAccount>> {
         return apiService.getUserAccounts(id)
     }
+
 
 
 }
