@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.aura.main.data.repository.HomeRepository
 import com.aura.main.model.home.UserAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -28,13 +29,24 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     fun getUserAccounts(idUser: String) {
         viewModelScope.launch {
             _etat.value = HomeState.LOADING
+
+            //todo DEBUG ONLY -------------
+            delay(5000)
+            //todo --Fakeerror------------------
+            //todo -------
+
             try {
                 val userAccounts = homeRepository.getUserAccounts(idUser)
 
                 val mainAccount = userAccounts.firstOrNull { it.main }
                 _userAccount.value = mainAccount
-                _etat.value = HomeState.SUCCESS
+                if(mainAccount!=null){
+                    _etat.value = HomeState.SUCCESS
+                }else{
+                    _etat.value = HomeState.ERROR
+                }
                 Log.d("Homedebug", "ViewModel Success ! : ${mainAccount.toString()}")
+
             } catch (e: Exception) {
                 _etat.value = HomeState.ERROR
                 Log.d("Homedebug", "ViewModel Error Exception ! : ${e.toString()}")
