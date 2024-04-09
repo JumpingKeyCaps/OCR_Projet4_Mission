@@ -1,8 +1,11 @@
 package com.aura.main.data.repository
 
 import com.aura.main.data.service.AuraApiService
+import com.aura.main.model.home.UserAccount
+import com.aura.main.model.login.LoginResponse
 import com.aura.main.model.transfer.TransferRequest
 import com.aura.main.model.transfer.TransferResponse
+import com.google.gson.Gson
 import javax.inject.Inject
 
 /**
@@ -18,7 +21,9 @@ class TransferRepository @Inject constructor(private val auraApiService: AuraApi
      *  @return  a TransferResponse object with the transfer result.
      */
     suspend fun transfer(transferRequest: TransferRequest): TransferResponse {
-        return auraApiService.transfer(transferRequest)
+        val response = auraApiService.transfer(transferRequest)
+        return response.body() ?: TransferResponse(result = false)
+
     }
 
 }
