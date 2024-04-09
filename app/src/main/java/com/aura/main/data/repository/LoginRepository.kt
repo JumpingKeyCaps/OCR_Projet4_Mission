@@ -1,5 +1,6 @@
 package com.aura.main.data.repository
 
+import android.util.Log
 import com.aura.main.data.service.AuraApiService
 import com.aura.main.model.login.LoginRequest
 import com.aura.main.model.login.LoginResponse
@@ -19,6 +20,8 @@ class LoginRepository @Inject constructor(private val auraApiService: AuraApiSer
      */
     suspend fun login(user: LoginRequest): LoginResponse {
         val response = auraApiService.login(user)
+
+        Log.d("connectMMM", "Response Code : "+ response.code())
         return response.body() ?: LoginResponse(granted = false)
     }
 
