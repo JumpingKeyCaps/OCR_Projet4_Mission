@@ -5,6 +5,7 @@ import com.aura.main.model.login.LoginRequest
 import com.aura.main.model.login.LoginResponse
 import com.aura.main.model.transfer.TransferRequest
 import com.aura.main.model.transfer.TransferResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -24,7 +25,7 @@ interface ApiService {
      * @return a LoginResponse with a boolean to know if the login is successful or not.
      */
     @POST("/login")
-    suspend fun login(@Body loginRequest: LoginRequest): LoginResponse
+    suspend fun login(@Body loginRequest: LoginRequest): Response<LoginResponse>
 
 
     /**
@@ -36,7 +37,7 @@ interface ApiService {
      * @return a TransferResponse with a boolean to know if the transfer is successful or not.
      */
     @POST("/transfer")
-    suspend fun transfer(@Body transferRequest: TransferRequest): TransferResponse
+    suspend fun transfer(@Body transferRequest: TransferRequest): Response<TransferResponse>
 
 
     /**
@@ -48,7 +49,7 @@ interface ApiService {
      * @return a list of UserAccount objects with all the data of the account.
      */
     @GET("/accounts/{id}")
-    suspend fun getUserAccounts(@Path("id") id: String): List<UserAccount>
+    suspend fun getUserAccounts(@Path("id") id: String): Response<List<UserAccount>>
 
 
 }
