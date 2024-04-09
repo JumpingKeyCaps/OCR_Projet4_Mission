@@ -10,6 +10,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.net.ConnectException
 import javax.inject.Inject
 
 
@@ -47,16 +48,22 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
      * @param motDePasse the password of the user.
      */
     fun seConnecter(identifier: String, motDePasse: String) {
+
+        Log.d("connectMMM", "loginRequest: ID = [$identifier]  MdP = [$motDePasse] ")
+
         // Use viewModelScope for coroutines related to the Activity lifecycle
         viewModelScope.launch {
             _etat.value = ConnexionState.CONNEXION_EN_COURS
 
 
-            //todo REMOVE THAT IT ONLY TO TEST ___________________
-            delay(10000)
-            //todo --------------------------------------------------
+
             try {
+
                 val loginResponse = loginRepository.login(LoginRequest(identifier, motDePasse))
+
+                //todo REMOVE THIS FAKE DELAY --------------
+                delay(5000)
+                //todo -------------------------------------
 
                 if(loginResponse.granted){
                     // Connexion accepted ! successful login response
@@ -65,13 +72,20 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
                 }else{
                     //Connexion refused.
                     _etat.value = ConnexionState.CONNEXION_ECHEC
-                    Log.d("connectMMM", "seConnecter: echec de connexion !")
+                    Log.d("connectMMM", "Connexion refused ! : "+ loginResponse.toString())
                 }
 
             } catch (e: Exception) {
                 // Handle network errors, server errors, etc.
                 _etat.value = ConnexionState.ERREUR_CONNEXION
-                Log.d("connectMMM", "seConnecter: erreur rsx ! \n"+e.message+"\n"+e.toString())
+                Log.d("connectMMM", " Erreur rsx ! \n"+e.message+"\n"+e.toString())
+
+                when(e){
+                    is ConnectException -> {}
+                    else ->{}
+                }
+
+
             }
 
 
