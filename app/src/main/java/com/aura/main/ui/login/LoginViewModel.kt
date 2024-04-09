@@ -62,7 +62,7 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
                 val loginResponse = loginRepository.login(LoginRequest(identifier, motDePasse))
 
                 //todo REMOVE THIS FAKE DELAY --------------
-                delay(5000)
+                delay(3000)
                 //todo -------------------------------------
 
                 if(loginResponse.granted){
