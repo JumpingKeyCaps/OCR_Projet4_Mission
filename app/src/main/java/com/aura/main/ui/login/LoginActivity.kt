@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -73,7 +74,7 @@ class LoginActivity : AppCompatActivity(){
    */
   fun setupViewListeners(){
     //Set the button login listener.
-    binding.login.setOnClickListener { loginViewModel.seConnecter(binding.identifier.toString().trim(),binding.password.toString().trim()) }
+    binding.login.setOnClickListener { loginViewModel.seConnecter(binding.identifier.text.toString(),binding.password.text.toString()) }
 
     //add text watcher to our views
     binding.identifier.addTextChangedListener(textWatcher)
@@ -92,7 +93,7 @@ class LoginActivity : AppCompatActivity(){
       // Collect du flow de l'état depuis le ViewModel
       loginViewModel.etat.collect { connexionState ->
 
-        var message:String? = null
+        val message:String?
 
         // Mettre à jour l'interface utilisateur en fonction de l'état de connexion
         when (connexionState) {
@@ -111,13 +112,13 @@ class LoginActivity : AppCompatActivity(){
           }
 
           ConnexionState.ERREUR_CONNEXION -> {
-            message = "A network error occurred while connecting."
+            message = "A network error occurred while connecting, please check your internet connexion and retry."
             withContext(Dispatchers.Main) {
               Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
               binding.loading.visibility = View.GONE
-              binding.login.isEnabled = false
-              binding.identifier.text.clear()
-              binding.password.text.clear()
+              binding.login.isEnabled = true
+           //   binding.identifier.text.clear()
+           //   binding.password.text.clear()
 
             }
 
@@ -137,11 +138,11 @@ class LoginActivity : AppCompatActivity(){
           ConnexionState.CONNEXION_ECHEC -> {
             message = "Login fail ! Wrong Password or ID "
             withContext(Dispatchers.Main) {
-              Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
+              Toast.makeText(this@LoginActivity, message, Toast.LENGTH_LONG).show()
               binding.loading.visibility = View.GONE
-              binding.login.isEnabled = false
-              binding.identifier.text.clear()
-              binding.password.text.clear()
+              binding.login.isEnabled = true
+            //  binding.identifier.text.clear()
+            //  binding.password.text.clear()
             }
           }
 
@@ -150,8 +151,10 @@ class LoginActivity : AppCompatActivity(){
             message = "Successful connection !"
             withContext(Dispatchers.Main) {
               binding.loading.visibility = View.GONE
-              Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
+              Toast.makeText(this@LoginActivity, message, Toast.LENGTH_LONG).show()
               val intent = Intent(this@LoginActivity, HomeActivity::class.java)
+              //add user ID to the intent extra
+              intent.putExtra("userId", binding.identifier.text.toString());
               startActivity(intent)
               finish()
             }
