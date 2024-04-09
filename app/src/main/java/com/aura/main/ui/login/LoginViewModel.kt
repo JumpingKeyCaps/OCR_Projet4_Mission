@@ -15,13 +15,21 @@ import javax.inject.Inject
 
 /**
  * The ViewModel for the Login Activity.
+ * - Inject the repository dependency in the constructor
  */
 @HiltViewModel
 class LoginViewModel @Inject constructor(private val loginRepository: LoginRepository) : ViewModel()  {
 
+    /** The Login state Stateflow. */
     private val _etat = MutableStateFlow(ConnexionState.INITIAL)
     val etat: StateFlow<ConnexionState> = _etat
 
+    /**
+     * Method to check if the user have enter all the required data to login.
+     *
+     * @param identifier the Id enter by the user.
+     * @param motDePasse the password enter by the user.
+     */
     fun verifierChamps(identifier: String, motDePasse: String) {
         if (identifier.isNotEmpty() && motDePasse.isNotEmpty()) {
             //champ de saisie Ok !
@@ -32,6 +40,12 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
         }
     }
 
+    /**
+     * Method to login the user account.
+     *
+     * @param identifier the Id of the user.
+     * @param motDePasse the password of the user.
+     */
     fun seConnecter(identifier: String, motDePasse: String) {
         // Use viewModelScope for coroutines related to the Activity lifecycle
         viewModelScope.launch {
