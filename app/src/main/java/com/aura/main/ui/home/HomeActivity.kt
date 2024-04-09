@@ -45,14 +45,14 @@ class HomeActivity : AppCompatActivity() {
    */
   private val homeViewModel: HomeViewModel by viewModels() // Access ViewModel instance
 
-  private val userId = intent.getStringExtra("userId")?:""
+  private lateinit var userId: String
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     binding = ActivityHomeBinding.inflate(layoutInflater)
     setContentView(binding.root)
-
+    userId = intent.getStringExtra("userId")?:""
 
     //listenr sur le bouton try again
     binding.tryAgainButton.setOnClickListener { UpdateUserAccount(userId)}
@@ -98,21 +98,25 @@ class HomeActivity : AppCompatActivity() {
       // Mise à jour de l'UI basée sur l'etat du screen home
       when(etat){
         HomeState.IDLE -> {
+          binding.title.visibility = View.VISIBLE
           binding.loadingHome.visibility = View.GONE
           binding.tryAgainButton.visibility = View.GONE
           binding.tryAgainButton.isEnabled = false
         }
         HomeState.LOADING -> {
+          binding.title.visibility = View.GONE
           binding.loadingHome.visibility = View.VISIBLE
           binding.tryAgainButton.visibility = View.GONE
           binding.tryAgainButton.isEnabled = false
         }
         HomeState.SUCCESS -> {
+          binding.title.visibility = View.VISIBLE
           binding.loadingHome.visibility = View.GONE
           binding.tryAgainButton.visibility = View.GONE
           binding.tryAgainButton.isEnabled = false
         }
         HomeState.ERROR -> {
+          binding.title.visibility = View.GONE
           binding.loadingHome.visibility = View.GONE
           binding.tryAgainButton.visibility = View.VISIBLE
           binding.tryAgainButton.isEnabled = true
