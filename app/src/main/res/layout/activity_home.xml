@@ -37,7 +37,7 @@
 
 
   <Button
-      android:id="@+id/tryAgain"
+      android:id="@+id/tryAgainButton"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="start"
@@ -57,9 +57,9 @@
       android:layout_height="wrap_content"
       android:layout_gravity="center"
       android:visibility="gone"
-      app:layout_constraintBottom_toTopOf="@+id/tryAgain"
-      app:layout_constraintEnd_toEndOf="@+id/tryAgain"
-      app:layout_constraintStart_toStartOf="@+id/tryAgain"
+      app:layout_constraintBottom_toTopOf="@+id/tryAgainButton"
+      app:layout_constraintEnd_toEndOf="@+id/tryAgainButton"
+      app:layout_constraintStart_toStartOf="@+id/tryAgainButton"
       app:layout_constraintTop_toBottomOf="@+id/balance" />
 
 
