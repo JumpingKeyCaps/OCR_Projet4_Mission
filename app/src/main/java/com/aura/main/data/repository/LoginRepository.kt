@@ -15,9 +15,11 @@ class LoginRepository @Inject constructor(private val auraApiService: AuraApiSer
      * Method to login the user to his account.
      *
      * @param user a LoginRequest object.
+     * @return a LoginResponse object.
      */
     suspend fun login(user: LoginRequest): LoginResponse {
-        return auraApiService.login(user)
+        val response = auraApiService.login(user)
+        return response.body() ?: LoginResponse(granted = false)
     }
 
 }
