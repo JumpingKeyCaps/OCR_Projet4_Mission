@@ -2,6 +2,7 @@ package com.aura.main.ui.home
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.ActivityResult
@@ -15,8 +16,7 @@ import com.aura.main.ui.transfer.TransferActivity
 /**
  * The home activity for the app.
  */
-class HomeActivity : AppCompatActivity()
-{
+class HomeActivity : AppCompatActivity() {
 
   /**
    * The binding for the home layout.
@@ -31,12 +31,22 @@ class HomeActivity : AppCompatActivity()
       //TODO
     }
 
-  override fun onCreate(savedInstanceState: Bundle?)
-  {
+  override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     binding = ActivityHomeBinding.inflate(layoutInflater)
     setContentView(binding.root)
+
+    // Récupération de l'ID utilisateur depuis l'intent extra
+    try{
+      val intent = intent
+      val userId = intent.getStringExtra("userId")
+
+    }catch (e:Exception){
+      Log.d("intentDataTransfered", "Error to get intent extra !")
+    }
+
+
 
     val balance = binding.balance
     val transfer = binding.transfer
