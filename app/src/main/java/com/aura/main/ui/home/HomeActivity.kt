@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -44,7 +45,7 @@ class HomeActivity : AppCompatActivity() {
    */
   private val homeViewModel: HomeViewModel by viewModels() // Access ViewModel instance
 
-
+  private val userId = intent.getStringExtra("userId")?:""
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -53,11 +54,11 @@ class HomeActivity : AppCompatActivity() {
     setContentView(binding.root)
 
 
+    //listenr sur le bouton try again
+    binding.tryAgainButton.setOnClickListener { UpdateUserAccount(userId)}
 
-
-    binding.transfer.setOnClickListener {
-      startTransferActivityForResult.launch(Intent(this@HomeActivity, TransferActivity::class.java))
-    }
+    //listerner sur le bouton transfer
+    binding.transfer.setOnClickListener { startTransferActivityForResult.launch(Intent(this@HomeActivity, TransferActivity::class.java))   }
 
     //on collect l'user account et on update l'Ui
     userAccountUpdater()
@@ -65,13 +66,16 @@ class HomeActivity : AppCompatActivity() {
     homeUiUpdater()
 
     // Récupération de l'ID utilisateur depuis l'intent extra
-    val intent = intent
-    val userId = intent.getStringExtra("userId")?:""
-
-     homeViewModel.getUserAccounts(userId)
+    UpdateUserAccount(userId)
 
 
   }
+
+  fun UpdateUserAccount(iduser: String){
+    homeViewModel.getUserAccounts(iduser)
+  }
+
+
 
   fun userAccountUpdater(){
     homeViewModel.userAccount.onEach { userAccount ->
@@ -93,10 +97,26 @@ class HomeActivity : AppCompatActivity() {
     homeViewModel.etat.onEach { etat ->
       // Mise à jour de l'UI basée sur l'etat du screen home
       when(etat){
-        HomeState.IDLE -> {}
-        HomeState.LOADING -> {}
-        HomeState.SUCCESS -> {}
-        HomeState.ERROR -> {}
+        HomeState.IDLE -> {
+          binding.loadingHome.visibility = View.GONE
+          binding.tryAgainButton.visibility = View.GONE
+          binding.tryAgainButton.isEnabled = false
+        }
+        HomeState.LOADING -> {
+          binding.loadingHome.visibility = View.VISIBLE
+          binding.tryAgainButton.visibility = View.GONE
+          binding.tryAgainButton.isEnabled = false
+        }
+        HomeState.SUCCESS -> {
+          binding.loadingHome.visibility = View.GONE
+          binding.tryAgainButton.visibility = View.GONE
+          binding.tryAgainButton.isEnabled = false
+        }
+        HomeState.ERROR -> {
+          binding.loadingHome.visibility = View.GONE
+          binding.tryAgainButton.visibility = View.VISIBLE
+          binding.tryAgainButton.isEnabled = true
+        }
       }
     }.launchIn(lifecycleScope)
   }
