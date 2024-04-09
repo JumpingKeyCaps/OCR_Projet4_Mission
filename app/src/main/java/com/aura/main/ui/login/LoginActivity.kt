@@ -111,9 +111,7 @@ class LoginActivity : AppCompatActivity(){
           }
 
           ConnexionState.ERREUR_CONNEXION -> {
-            // Afficher un message d'erreur
             message = "A network error occurred while connecting."
-            //on execute sur le main thread
             withContext(Dispatchers.Main) {
               Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
               binding.loading.visibility = View.GONE
@@ -129,32 +127,28 @@ class LoginActivity : AppCompatActivity(){
             message = "Connection in progress ..."
             withContext(Dispatchers.Main) {
               Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
-              // Afficher un indicateur de chargement
               binding.loading.visibility = View.VISIBLE
               binding.login.isEnabled = false
+              binding.identifier.clearFocus()
+              binding.password.clearFocus()
             }
           }
 
           ConnexionState.CONNEXION_ECHEC -> {
             message = "Login fail ! Wrong Password or ID "
-            //on execute sur le main thread
             withContext(Dispatchers.Main) {
               Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
               binding.loading.visibility = View.GONE
               binding.login.isEnabled = false
               binding.identifier.text.clear()
               binding.password.text.clear()
-
             }
           }
 
 
           ConnexionState.CONNEXION_REUSSIE -> {
-            // Afficher un message de succès
             message = "Successful connection !"
-            // Naviguer vers la page d'accueil
             withContext(Dispatchers.Main) {
-              // Cacher l'indicateur de chargement
               binding.loading.visibility = View.GONE
               Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
               val intent = Intent(this@LoginActivity, HomeActivity::class.java)
