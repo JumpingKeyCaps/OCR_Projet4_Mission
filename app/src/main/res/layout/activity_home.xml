@@ -56,11 +56,11 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="center"
+      android:layout_marginTop="16dp"
       android:visibility="gone"
-      app:layout_constraintBottom_toTopOf="@+id/tryAgainButton"
-      app:layout_constraintEnd_toEndOf="@+id/tryAgainButton"
-      app:layout_constraintStart_toStartOf="@+id/tryAgainButton"
-      app:layout_constraintTop_toBottomOf="@+id/balance" />
+      app:layout_constraintEnd_toEndOf="@+id/title"
+      app:layout_constraintStart_toStartOf="@+id/title"
+      app:layout_constraintTop_toBottomOf="@+id/title" />
 
 
   <com.google.android.material.floatingactionbutton.FloatingActionButton
