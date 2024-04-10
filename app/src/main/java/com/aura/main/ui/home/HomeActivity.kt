@@ -1,5 +1,6 @@
 package com.aura.main.ui.home
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -37,7 +38,7 @@ class HomeActivity : AppCompatActivity() {
    */
   private val startTransferActivityForResult =
     registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-      //TODO
+      if (result.resultCode == Activity.RESULT_OK) updateUserAccount(userId)
     }
 
 
@@ -60,14 +61,19 @@ class HomeActivity : AppCompatActivity() {
     binding.tryAgainButton.setOnClickListener { updateUserAccount(userId)}
 
     //listerner sur le bouton transfer
-    binding.transfer.setOnClickListener { startTransferActivityForResult.launch(Intent(this@HomeActivity, TransferActivity::class.java))   }
+    binding.transfer.setOnClickListener {
+      val intent = Intent(this@HomeActivity, TransferActivity::class.java)
+      intent.putExtra("userId", userId)
+      startTransferActivityForResult.launch(
+        intent
+      )}
 
     //on collect l'user account et on update l'Ui
     userAccountUpdater()
     //on collect notre Etat pour homescreen
     homeUiUpdater()
 
-    // Récupération de l'ID utilisateur depuis l'intent extra
+    //to get the useraccount in activity start.
     updateUserAccount(userId)
 
 
@@ -102,6 +108,7 @@ class HomeActivity : AppCompatActivity() {
         HomeState.IDLE -> {
           withContext(Dispatchers.Main) {
             binding.title.visibility = View.VISIBLE
+            binding.balance.visibility = View.VISIBLE
             binding.loadingHome.visibility = View.GONE
             binding.tryAgainButton.visibility = View.GONE
             binding.tryAgainButton.isEnabled = false
@@ -112,6 +119,7 @@ class HomeActivity : AppCompatActivity() {
           withContext(Dispatchers.Main) {
             Snackbar.make(binding.root,homeViewModel.getHomeInfoMessageToShow(HomeState.LOADING) , Snackbar.LENGTH_SHORT).show()
             binding.title.visibility = View.GONE
+            binding.balance.visibility = View.GONE
             binding.loadingHome.visibility = View.VISIBLE
             binding.tryAgainButton.visibility = View.GONE
             binding.tryAgainButton.isEnabled = false
@@ -122,6 +130,7 @@ class HomeActivity : AppCompatActivity() {
         HomeState.SUCCESS -> {
           withContext(Dispatchers.Main) {
             binding.title.visibility = View.VISIBLE
+            binding.balance.visibility = View.VISIBLE
             binding.loadingHome.visibility = View.GONE
             binding.tryAgainButton.visibility = View.GONE
             binding.tryAgainButton.isEnabled = false
@@ -133,6 +142,7 @@ class HomeActivity : AppCompatActivity() {
           withContext(Dispatchers.Main) {
             Snackbar.make(binding.root,homeViewModel.getHomeInfoMessageToShow(HomeState.ERROR) , Snackbar.LENGTH_LONG).show()
             binding.title.visibility = View.GONE
+            binding.balance.visibility = View.GONE
             binding.loadingHome.visibility = View.GONE
             binding.tryAgainButton.visibility = View.VISIBLE
             binding.tryAgainButton.isEnabled = true
