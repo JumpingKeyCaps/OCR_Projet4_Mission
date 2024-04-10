@@ -4,23 +4,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.aura.databinding.ActivityLoginBinding
 import com.aura.main.ui.home.HomeActivity
-import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
@@ -30,7 +24,7 @@ import kotlinx.coroutines.withContext
 class LoginActivity : AppCompatActivity(){
 
   /**
-   * The binding for the login layout.
+   * The view binder for the login layout.
    */
   private lateinit var binding: ActivityLoginBinding
   /**
@@ -45,7 +39,7 @@ class LoginActivity : AppCompatActivity(){
    */
   private val textWatcher = object : TextWatcher {
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-      updateLoginButtonState() // call  to update the button state
+      updateLoginButtonState() // call to update the button state
     }
     override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) { }
     override fun afterTextChanged(s: Editable) { }
@@ -75,7 +69,7 @@ class LoginActivity : AppCompatActivity(){
   /**
    * Method to setup all the used views listener in the activity.
    */
-  fun setupViewListeners(){
+  private fun setupViewListeners(){
     //Set the button login listener.
     binding.login.setOnClickListener { loginViewModel.seConnecter(binding.identifier.text.toString(),binding.password.text.toString()) }
 
@@ -88,7 +82,7 @@ class LoginActivity : AppCompatActivity(){
    * Method to collect the current login state and update all views in consequences.
    * @param loginViewModel the ViewModel to use to collect the state flow
    */
-  fun loginUiUpdater(loginViewModel: LoginViewModel){
+  private fun loginUiUpdater(loginViewModel: LoginViewModel){
 
     //on collect notre StateFlow d'etat d'ecran actuel depuis le viewmodel
     //on lance une coroutine
@@ -115,9 +109,7 @@ class LoginActivity : AppCompatActivity(){
             Snackbar.make(binding.root,loginViewModel.getLoginInfoMessageToShow(ConnexionState.ERREUR_CONNEXION) , Snackbar.LENGTH_LONG).show()
             binding.loading.visibility = View.GONE
             binding.login.isEnabled = true
-
           }
-
         }
 
         ConnexionState.CONNEXION_EN_COURS -> {
@@ -156,16 +148,10 @@ class LoginActivity : AppCompatActivity(){
 
 
   /**
-   * Method to update the state of the login button
-   * this method call the viewmodel methode to verify if all condition to login is ok
+   * Method to update the state of the login button.
+   *  - this method call the viewmodel methode to verify if all condition to login is ok
    * to update the current screen state (and unlock the button)
    */
-  private fun updateLoginButtonState() = loginViewModel.verifierChamps(binding.identifier.text.toString().trim(), binding.password.text.toString().trim())
-
-
-
-
-
-
+  private fun updateLoginButtonState() = loginViewModel.verifierChamps(binding.identifier.text.toString(), binding.password.text.toString())
 
 }
