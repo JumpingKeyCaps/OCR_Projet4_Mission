@@ -2,7 +2,6 @@ package com.aura.main.ui.home
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -14,11 +13,13 @@ import androidx.lifecycle.lifecycleScope
 import com.aura.R
 import com.aura.databinding.ActivityHomeBinding
 import com.aura.main.ui.login.LoginActivity
-import com.aura.main.ui.login.LoginViewModel
 import com.aura.main.ui.transfer.TransferActivity
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.withContext
 
 /**
  * The home activity for the app.
@@ -52,10 +53,11 @@ class HomeActivity : AppCompatActivity() {
 
     binding = ActivityHomeBinding.inflate(layoutInflater)
     setContentView(binding.root)
+    //on recup l'id user dans le extra de l'intent
     userId = intent.getStringExtra("userId")?:""
 
     //listenr sur le bouton try again
-    binding.tryAgainButton.setOnClickListener { UpdateUserAccount(userId)}
+    binding.tryAgainButton.setOnClickListener { updateUserAccount(userId)}
 
     //listerner sur le bouton transfer
     binding.transfer.setOnClickListener { startTransferActivityForResult.launch(Intent(this@HomeActivity, TransferActivity::class.java))   }
@@ -66,18 +68,18 @@ class HomeActivity : AppCompatActivity() {
     homeUiUpdater()
 
     // Récupération de l'ID utilisateur depuis l'intent extra
-    UpdateUserAccount(userId)
+    updateUserAccount(userId)
 
 
   }
 
-  fun UpdateUserAccount(iduser: String){
+  private fun updateUserAccount(iduser: String){
     homeViewModel.getUserAccounts(iduser)
   }
 
 
 
-  fun userAccountUpdater(){
+  private fun userAccountUpdater(){
     homeViewModel.userAccount.onEach { userAccount ->
       // Mise à jour de l'UI basée sur userAccount (si non null)
       if (userAccount != null) {
@@ -93,33 +95,50 @@ class HomeActivity : AppCompatActivity() {
       }
     }.launchIn(lifecycleScope)
   }
-  fun homeUiUpdater(){
+  private fun homeUiUpdater(){
     homeViewModel.etat.onEach { etat ->
       // Mise à jour de l'UI basée sur l'etat du screen home
       when(etat){
         HomeState.IDLE -> {
-          binding.title.visibility = View.VISIBLE
-          binding.loadingHome.visibility = View.GONE
-          binding.tryAgainButton.visibility = View.GONE
-          binding.tryAgainButton.isEnabled = false
+          withContext(Dispatchers.Main) {
+            binding.title.visibility = View.VISIBLE
+            binding.loadingHome.visibility = View.GONE
+            binding.tryAgainButton.visibility = View.GONE
+            binding.tryAgainButton.isEnabled = false
+            binding.transfer.isEnabled = false
+          }
         }
         HomeState.LOADING -> {
-          binding.title.visibility = View.GONE
-          binding.loadingHome.visibility = View.VISIBLE
-          binding.tryAgainButton.visibility = View.GONE
-          binding.tryAgainButton.isEnabled = false
+          withContext(Dispatchers.Main) {
+            Snackbar.make(binding.root,homeViewModel.getHomeInfoMessageToShow(HomeState.LOADING) , Snackbar.LENGTH_SHORT).show()
+            binding.title.visibility = View.GONE
+            binding.loadingHome.visibility = View.VISIBLE
+            binding.tryAgainButton.visibility = View.GONE
+            binding.tryAgainButton.isEnabled = false
+            binding.transfer.isEnabled = false
+          }
+
         }
         HomeState.SUCCESS -> {
-          binding.title.visibility = View.VISIBLE
-          binding.loadingHome.visibility = View.GONE
-          binding.tryAgainButton.visibility = View.GONE
-          binding.tryAgainButton.isEnabled = false
+          withContext(Dispatchers.Main) {
+            binding.title.visibility = View.VISIBLE
+            binding.loadingHome.visibility = View.GONE
+            binding.tryAgainButton.visibility = View.GONE
+            binding.tryAgainButton.isEnabled = false
+            binding.transfer.isEnabled = true
+          }
+
         }
         HomeState.ERROR -> {
-          binding.title.visibility = View.GONE
-          binding.loadingHome.visibility = View.GONE
-          binding.tryAgainButton.visibility = View.VISIBLE
-          binding.tryAgainButton.isEnabled = true
+          withContext(Dispatchers.Main) {
+            Snackbar.make(binding.root,homeViewModel.getHomeInfoMessageToShow(HomeState.ERROR) , Snackbar.LENGTH_LONG).show()
+            binding.title.visibility = View.GONE
+            binding.loadingHome.visibility = View.GONE
+            binding.tryAgainButton.visibility = View.VISIBLE
+            binding.tryAgainButton.isEnabled = true
+            binding.transfer.isEnabled = false
+          }
+
         }
       }
     }.launchIn(lifecycleScope)
@@ -135,13 +154,12 @@ class HomeActivity : AppCompatActivity() {
   {
     return when (item.itemId)
     {
-      R.id.disconnect ->
-      {
+      R.id.disconnect ->{
         startActivity(Intent(this@HomeActivity, LoginActivity::class.java))
         finish()
         true
       }
-      else            -> super.onOptionsItemSelected(item)
+      else -> super.onOptionsItemSelected(item)
     }
   }
 
