@@ -34,7 +34,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
             _etat.value = HomeState.LOADING
 
             //todo DEBUG ONLY -------------
-            delay(5000)
+        //    delay(5000)
             //todo --Fakeerror------------------
             //todo -------
 
