@@ -1,7 +1,6 @@
 package com.aura.main.ui.transfer
 
 import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,9 +9,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.aura.databinding.ActivityTransferBinding
-import com.aura.main.ui.home.HomeActivity
-import com.aura.main.ui.login.ConnexionState
-import com.aura.main.ui.login.LoginViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -21,11 +17,10 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 
 /**
- * The transfer activity for the app.
+ * The transfer activity.
  */
 @AndroidEntryPoint
-class TransferActivity : AppCompatActivity()
-{
+class TransferActivity : AppCompatActivity() {
 
   /**
    * The binding for the transfer layout.
@@ -35,8 +30,7 @@ class TransferActivity : AppCompatActivity()
   /**
    * The transfer ViewModel to use with this activity.
    */
-  private val transferViewModel: TransferViewModel by viewModels() // Access ViewModel instance
-
+  private val transferViewModel: TransferViewModel by viewModels()
 
   /**
    * The TextWatcher used to watch the data enter by the user
@@ -50,11 +44,19 @@ class TransferActivity : AppCompatActivity()
     override fun afterTextChanged(s: Editable) { }
   }
 
+  /**
+   * The user Identifier.
+   */
   private lateinit var userId: String
 
 
-  override fun onCreate(savedInstanceState: Bundle?)
-  {
+
+  /**
+   * Life cycle method called at the creation of the activity.
+   *
+   * @param savedInstanceState the activity state bundle.
+   */
+  override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     binding = ActivityTransferBinding.inflate(layoutInflater)
@@ -67,15 +69,14 @@ class TransferActivity : AppCompatActivity()
     setupViewListeners()
 
     //Collect current Login State from the Viewmodel
-    TransferUiUpdater(transferViewModel)
-
+    transferUiUpdater(transferViewModel)
 
   }
 
   /**
    * Method to setup all the used views listener in the activity.
    */
-  fun setupViewListeners(){
+  private fun setupViewListeners(){
     //Set the button login listener.
     binding.transfer.setOnClickListener { transferViewModel.transfer(userId,binding.recipient.text.toString(),binding.amount.text.toString()) }
 
@@ -89,7 +90,7 @@ class TransferActivity : AppCompatActivity()
    * Method to collect the current Transfer state and update all views in consequences.
    * @param transferViewModel the ViewModel to use to collect the state flow
    */
-  fun TransferUiUpdater(transferViewModel: TransferViewModel){
+  private fun transferUiUpdater(transferViewModel: TransferViewModel){
 
     transferViewModel.etat.onEach {transferState ->
 
@@ -152,7 +153,6 @@ class TransferActivity : AppCompatActivity()
         }
       }
     }.launchIn(lifecycleScope)
-
   }
 
   /**
@@ -161,6 +161,5 @@ class TransferActivity : AppCompatActivity()
    * to update the current screen state (and unlock the button)
    */
   private fun updateTransferButtonState() = transferViewModel.verifierTransferChamps(binding.recipient.text.toString(), binding.amount.text.toString())
-
 
 }
