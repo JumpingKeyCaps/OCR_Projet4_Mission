@@ -26,6 +26,9 @@
 
   <string name="try_againButton">Try again</string>
 
+  <string name="transfer_conn_error">A network error occurred while transferring, please check your internet connexion and retry.</string>
+  <string name="transfer_conn_fail">Failed to transfer money from your account, please try again.</string>
+  <string name="transfer_conn_loading">Transfer in progress ...</string>
 
 
 
