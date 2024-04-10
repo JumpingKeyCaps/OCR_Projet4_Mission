@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.aura.databinding.ActivityLoginBinding
 import com.aura.main.ui.home.HomeActivity
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -67,7 +68,7 @@ class LoginActivity : AppCompatActivity(){
     setupViewListeners()
 
     //Collect current Login State from the Viewmodel
-    updateCurrentLoginState(loginViewModel)
+    loginUiUpdater(loginViewModel)
 
   }
 
@@ -87,7 +88,7 @@ class LoginActivity : AppCompatActivity(){
    * Method to collect the current login state and update all views in consequences.
    * @param loginViewModel the ViewModel to use to collect the state flow
    */
-  fun updateCurrentLoginState(loginViewModel: LoginViewModel){
+  fun loginUiUpdater(loginViewModel: LoginViewModel){
 
     //on collect notre StateFlow d'etat d'ecran actuel depuis le viewmodel
     //on lance une coroutine
@@ -114,7 +115,7 @@ class LoginActivity : AppCompatActivity(){
         ConnexionState.ERREUR_CONNEXION -> {
           message = "A network error occurred while connecting, please check your internet connexion and retry."
           withContext(Dispatchers.Main) {
-            Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
+            Snackbar.make(binding.root,message , Snackbar.LENGTH_LONG).show()
             binding.loading.visibility = View.GONE
             binding.login.isEnabled = true
             //   binding.identifier.text.clear()
@@ -127,7 +128,7 @@ class LoginActivity : AppCompatActivity(){
         ConnexionState.CONNEXION_EN_COURS -> {
           message = "Connection in progress ..."
           withContext(Dispatchers.Main) {
-            Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
+            Snackbar.make(binding.root,message , Snackbar.LENGTH_SHORT).show()
             binding.loading.visibility = View.VISIBLE
             binding.login.isEnabled = false
             binding.identifier.clearFocus()
@@ -138,7 +139,7 @@ class LoginActivity : AppCompatActivity(){
         ConnexionState.CONNEXION_ECHEC -> {
           message = "Login fail ! Wrong Password or ID "
           withContext(Dispatchers.Main) {
-            Toast.makeText(this@LoginActivity, message, Toast.LENGTH_LONG).show()
+            Snackbar.make(binding.root,message , Snackbar.LENGTH_LONG).show()
             binding.loading.visibility = View.GONE
             binding.login.isEnabled = true
             //  binding.identifier.text.clear()
@@ -148,13 +149,13 @@ class LoginActivity : AppCompatActivity(){
 
 
         ConnexionState.CONNEXION_REUSSIE -> {
-          message = "Successful connection !"
+       //   message = "Successful connection !"
           withContext(Dispatchers.Main) {
             binding.loading.visibility = View.GONE
-            Toast.makeText(this@LoginActivity, message, Toast.LENGTH_LONG).show()
+        //    Snackbar.make(binding.root,message , Snackbar.LENGTH_SHORT).show();
             val intent = Intent(this@LoginActivity, HomeActivity::class.java)
             //add user ID to the intent extra
-            intent.putExtra("userId", binding.identifier.text.toString());
+            intent.putExtra("userId", binding.identifier.text.toString())
             startActivity(intent)
             finish()
           }
@@ -163,7 +164,7 @@ class LoginActivity : AppCompatActivity(){
     }.launchIn(lifecycleScope)
 
   }
-  fun updateCurrentLoginState_V1(loginViewModel: LoginViewModel){
+  fun loginUiUpdater_V1(loginViewModel: LoginViewModel){
     //on the main scope, but need manual cancelation
     CoroutineScope(Dispatchers.Main).launch {
       // Collect du flow de l'état depuis le ViewModel
