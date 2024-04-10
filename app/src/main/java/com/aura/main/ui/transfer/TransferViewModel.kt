@@ -7,21 +7,18 @@ import com.aura.R
 import com.aura.main.data.repository.TransferRepository
 import com.aura.main.model.transfer.TransferRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
- * The ViewModel for the Transfer Activity.
- * - Inject the repository dependency in the constructor
+ * The ViewModel for the Transfer Activity.  Inject the repository dependency in the constructor
  */
 @HiltViewModel
 class TransferViewModel @Inject constructor(private val transferRepository: TransferRepository) : ViewModel()  {
 
-
-    /** The Transfer state Stateflow. */
+    /** The transfer state Stateflow. */
     private val _etat = MutableStateFlow(TransferState.IDLE)
     val etat: StateFlow<TransferState> = _etat
 
@@ -34,16 +31,14 @@ class TransferViewModel @Inject constructor(private val transferRepository: Tran
      */
     fun verifierTransferChamps(receiverID: String, amount: String) {
         if (receiverID.isNotEmpty() && amount.isNotEmpty()) {
-
             try{
-                val convertTest = amount.toDouble()
+                amount.toDouble()
                 //champ de saisie Ok !
                 _etat.value = TransferState.FIELDS_OK
             }catch (e:NumberFormatException ){
                 //champ de saisie manquant
                 _etat.value = TransferState.IDLE
             }
-
         } else {
             //champ de saisie manquant
             _etat.value = TransferState.IDLE
@@ -63,12 +58,11 @@ class TransferViewModel @Inject constructor(private val transferRepository: Tran
         // Use viewModelScope for coroutines related to the Activity lifecycle
         viewModelScope.launch {
             _etat.value = TransferState.LOADING
-
             try {
                 val transferResponse = transferRepository.transfer(TransferRequest(senderId, receiverId,amount.toDouble()))
 
                 //todo REMOVE THIS FAKE DELAY --------------
-             //   delay(3000)
+                //   delay(3000)
                 //todo -------------------------------------
 
                 if(transferResponse.result){
@@ -98,8 +92,6 @@ class TransferViewModel @Inject constructor(private val transferRepository: Tran
             TransferState.LOADING -> R.string.transfer_conn_loading
             else -> 0
         }
-
     }
-
 
 }
