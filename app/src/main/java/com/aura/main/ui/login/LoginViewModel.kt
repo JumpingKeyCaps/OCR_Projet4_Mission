@@ -1,8 +1,10 @@
 package com.aura.main.ui.login
 
 import android.util.Log
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aura.R
 import com.aura.main.data.repository.LoginRepository
 import com.aura.main.model.login.LoginRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -55,10 +57,7 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
         viewModelScope.launch {
             _etat.value = ConnexionState.CONNEXION_EN_COURS
 
-
-
             try {
-
                 val loginResponse = loginRepository.login(LoginRequest(identifier, motDePasse))
 
                 //todo REMOVE THIS FAKE DELAY --------------
@@ -68,27 +67,29 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
                 if(loginResponse.granted){
                     // Connexion accepted ! successful login response
                     _etat.value = ConnexionState.CONNEXION_REUSSIE
-                    Log.d("connectMMM", "Connexion Ok")
                 }else{
                     //Connexion refused.
                     _etat.value = ConnexionState.CONNEXION_ECHEC
-                    Log.d("connectMMM", "Connexion refused ! : "+ loginResponse.toString())
                 }
-
             } catch (e: Exception) {
                 // Handle network errors, server errors, etc.
                 _etat.value = ConnexionState.ERREUR_CONNEXION
-                Log.d("connectMMM", " Erreur rsx ! \n"+e.message+"\n"+e.toString())
-
-                when(e){
-                    is ConnectException -> {}
-                    else ->{}
-                }
-
-
             }
+        }
+    }
 
 
+    /**
+     * Method to get the informative message to display to the user.
+     * @param connexionState the current login state of the activity.
+     */
+    @StringRes
+    fun getLoginInfoMessageToShow(connexionState: ConnexionState): Int {
+        return when(connexionState){
+            ConnexionState.ERREUR_CONNEXION -> R.string.login_conn_error
+            ConnexionState.CONNEXION_ECHEC -> R.string.login_conn_fail
+            ConnexionState.CONNEXION_EN_COURS -> R.string.login_conn_running
+            else -> 0
         }
 
     }
