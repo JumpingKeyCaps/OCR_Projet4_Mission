@@ -8,13 +8,17 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 /**
- * The Hilt Module who provide instance to Dependency injections.
+ * The Hilt App Module who provide the retrofit instance.
  */
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-
+    /**
+     * Method to provide the Retrofit instance to use.
+     *
+     * @return a retrofit instance ready to use with the good URL and parser.
+     */
     @Provides
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
