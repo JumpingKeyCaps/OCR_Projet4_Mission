@@ -113,22 +113,18 @@ class LoginActivity : AppCompatActivity(){
         }
 
         ConnexionState.ERREUR_CONNEXION -> {
-          message = "A network error occurred while connecting, please check your internet connexion and retry."
           withContext(Dispatchers.Main) {
-            Snackbar.make(binding.root,message , Snackbar.LENGTH_LONG).show()
+            Snackbar.make(binding.root,loginViewModel.getLoginInfoMessageToShow(ConnexionState.ERREUR_CONNEXION) , Snackbar.LENGTH_LONG).show()
             binding.loading.visibility = View.GONE
             binding.login.isEnabled = true
-            //   binding.identifier.text.clear()
-            //   binding.password.text.clear()
 
           }
 
         }
 
         ConnexionState.CONNEXION_EN_COURS -> {
-          message = "Connection in progress ..."
           withContext(Dispatchers.Main) {
-            Snackbar.make(binding.root,message , Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(binding.root,loginViewModel.getLoginInfoMessageToShow(ConnexionState.CONNEXION_EN_COURS) , Snackbar.LENGTH_SHORT).show()
             binding.loading.visibility = View.VISIBLE
             binding.login.isEnabled = false
             binding.identifier.clearFocus()
@@ -137,22 +133,17 @@ class LoginActivity : AppCompatActivity(){
         }
 
         ConnexionState.CONNEXION_ECHEC -> {
-          message = "Login fail ! Wrong Password or ID "
           withContext(Dispatchers.Main) {
-            Snackbar.make(binding.root,message , Snackbar.LENGTH_LONG).show()
+            Snackbar.make(binding.root,loginViewModel.getLoginInfoMessageToShow(ConnexionState.CONNEXION_ECHEC) , Snackbar.LENGTH_LONG).show()
             binding.loading.visibility = View.GONE
             binding.login.isEnabled = true
-            //  binding.identifier.text.clear()
-            //  binding.password.text.clear()
           }
         }
 
 
         ConnexionState.CONNEXION_REUSSIE -> {
-       //   message = "Successful connection !"
           withContext(Dispatchers.Main) {
             binding.loading.visibility = View.GONE
-        //    Snackbar.make(binding.root,message , Snackbar.LENGTH_SHORT).show();
             val intent = Intent(this@LoginActivity, HomeActivity::class.java)
             //add user ID to the intent extra
             intent.putExtra("userId", binding.identifier.text.toString())
