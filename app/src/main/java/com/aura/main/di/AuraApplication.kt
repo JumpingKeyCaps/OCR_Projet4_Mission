@@ -4,7 +4,7 @@ import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 
 /**
- * Application Class to use Hilt
+ * Application Class to use with Hilt
  */
 @HiltAndroidApp
 class AuraApplication: Application() {
