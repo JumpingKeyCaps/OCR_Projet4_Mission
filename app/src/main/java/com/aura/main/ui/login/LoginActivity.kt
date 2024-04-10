@@ -94,13 +94,11 @@ class LoginActivity : AppCompatActivity(){
     //on lance une coroutine
 
     loginViewModel.etat.onEach {connexionState ->
-      val message:String?
 
       // Mettre à jour l'interface utilisateur en fonction de l'état de connexion
       when (connexionState) {
 
         ConnexionState.INITIAL -> {
-          // Ne rien faire, l'utilisateur n'a pas encore saisi ses informations
           withContext(Dispatchers.Main) {
             binding.login.isEnabled = false
           }
@@ -155,82 +153,7 @@ class LoginActivity : AppCompatActivity(){
     }.launchIn(lifecycleScope)
 
   }
-  fun loginUiUpdater_V1(loginViewModel: LoginViewModel){
-    //on the main scope, but need manual cancelation
-    CoroutineScope(Dispatchers.Main).launch {
-      // Collect du flow de l'état depuis le ViewModel
-      loginViewModel.etat.collect { connexionState ->
 
-        val message:String?
-
-        // Mettre à jour l'interface utilisateur en fonction de l'état de connexion
-        when (connexionState) {
-
-          ConnexionState.INITIAL -> {
-            // Ne rien faire, l'utilisateur n'a pas encore saisi ses informations
-            withContext(Dispatchers.Main) {
-              binding.login.isEnabled = false
-            }
-          }
-
-          ConnexionState.CHAMPS_REMPLIS -> {
-            withContext(Dispatchers.Main) {
-              binding.login.isEnabled = true
-            }
-          }
-
-          ConnexionState.ERREUR_CONNEXION -> {
-            message = "A network error occurred while connecting, please check your internet connexion and retry."
-            withContext(Dispatchers.Main) {
-              Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
-              binding.loading.visibility = View.GONE
-              binding.login.isEnabled = true
-              //   binding.identifier.text.clear()
-              //   binding.password.text.clear()
-
-            }
-
-          }
-
-          ConnexionState.CONNEXION_EN_COURS -> {
-            message = "Connection in progress ..."
-            withContext(Dispatchers.Main) {
-              Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
-              binding.loading.visibility = View.VISIBLE
-              binding.login.isEnabled = false
-              binding.identifier.clearFocus()
-              binding.password.clearFocus()
-            }
-          }
-
-          ConnexionState.CONNEXION_ECHEC -> {
-            message = "Login fail ! Wrong Password or ID "
-            withContext(Dispatchers.Main) {
-              Toast.makeText(this@LoginActivity, message, Toast.LENGTH_LONG).show()
-              binding.loading.visibility = View.GONE
-              binding.login.isEnabled = true
-              //  binding.identifier.text.clear()
-              //  binding.password.text.clear()
-            }
-          }
-
-
-          ConnexionState.CONNEXION_REUSSIE -> {
-            message = "Successful connection !"
-            withContext(Dispatchers.Main) {
-              binding.loading.visibility = View.GONE
-              Toast.makeText(this@LoginActivity, message, Toast.LENGTH_LONG).show()
-              val intent = Intent(this@LoginActivity, HomeActivity::class.java)
-              //add user ID to the intent extra
-              intent.putExtra("userId", binding.identifier.text.toString());
-              startActivity(intent)
-              finish()
-            }
-          }
-        }
-      }
-    }
-  }
 
   /**
    * Method to update the state of the login button
