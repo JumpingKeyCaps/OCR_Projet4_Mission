@@ -5,18 +5,19 @@ import com.aura.main.model.login.LoginRequest
 import com.aura.main.model.login.LoginResponse
 import com.aura.main.model.transfer.TransferRequest
 import com.aura.main.model.transfer.TransferResponse
-import com.google.gson.Gson
 import retrofit2.Retrofit
 import retrofit2.Response
 import javax.inject.Inject
 
+/**
+ * The app API service to communicate with the server.
+ */
 class AuraApiService  @Inject constructor(private val retrofit: Retrofit) : ApiService {
 
     /**
      * The ApiService initiate lately with a retrofit instance
      */
     private val apiService by lazy { retrofit.create(ApiService::class.java) }
-
 
     /**
      * Methode to login.
@@ -39,15 +40,13 @@ class AuraApiService  @Inject constructor(private val retrofit: Retrofit) : ApiS
     }
 
     /**
-     * Methode to get all user accounts.
+     * Methode to get the user accounts.
      *
      * @param id of the user.
-     * @return  a UserAccount object list.
+     * @return  a UserAccount objects list.
      */
     override suspend fun getUserAccounts(id: String): Response<List<UserAccount>> {
         return apiService.getUserAccounts(id)
     }
-
-
 
 }
