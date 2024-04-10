@@ -1,6 +1,5 @@
 package com.aura.main.ui.login
 
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,17 +7,14 @@ import com.aura.R
 import com.aura.main.data.repository.LoginRepository
 import com.aura.main.model.login.LoginRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.net.ConnectException
 import javax.inject.Inject
 
 
 /**
- * The ViewModel for the Login Activity.
- * - Inject the repository dependency in the constructor
+ * The ViewModel for the Login Activity. Inject the repository dependency in the constructor
  */
 @HiltViewModel
 class LoginViewModel @Inject constructor(private val loginRepository: LoginRepository) : ViewModel()  {
@@ -44,15 +40,12 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
     }
 
     /**
-     * Method to login the user account.
+     * Method to login in the user account.
      *
      * @param identifier the Id of the user.
      * @param motDePasse the password of the user.
      */
     fun seConnecter(identifier: String, motDePasse: String) {
-
-        Log.d("connectMMM", "loginRequest: ID = [$identifier]  MdP = [$motDePasse] ")
-
         // Use viewModelScope for coroutines related to the Activity lifecycle
         viewModelScope.launch {
             _etat.value = ConnexionState.CONNEXION_EN_COURS
@@ -61,7 +54,7 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
                 val loginResponse = loginRepository.login(LoginRequest(identifier, motDePasse))
 
                 //todo REMOVE THIS FAKE DELAY --------------
-             //   delay(3000)
+                //   delay(3000)
                 //todo -------------------------------------
 
                 if(loginResponse.granted){
@@ -91,7 +84,6 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
             ConnexionState.CONNEXION_EN_COURS -> R.string.login_conn_running
             else -> 0
         }
-
     }
 
 }
