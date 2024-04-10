@@ -12,5 +12,21 @@
   <string name="prompt_recipient">Destinataire</string>
   <string name="prompt_amount">Montant</string>
   <string name="action_transfer">Faire le virement</string>
-    <string name="try_againButton">Try again</string>
+
+
+
+  <string name="login_conn_error">A network error occurred while connecting, please check your internet connexion and retry.</string>
+  <string name="login_conn_running">Connection in progress ...</string>
+  <string name="login_conn_fail">Login fail ! Wrong Password or ID.</string>
+
+
+  <string name="home_conn_error">Failed to load your main account, please try again.</string>
+  <string name="home_conn_loading">Loading of your main account ...</string>
+
+
+  <string name="try_againButton">Try again</string>
+
+
+
+
 </resources>
