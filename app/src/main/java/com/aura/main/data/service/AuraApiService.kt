@@ -1,12 +1,11 @@
 package com.aura.main.data.service
 
+import com.aura.main.data.service.network.AuraNetworkServiceImpl
 import com.aura.main.model.home.UserAccount
 import com.aura.main.model.login.LoginRequest
 import com.aura.main.model.login.LoginResponse
 import com.aura.main.model.transfer.TransferRequest
 import com.aura.main.model.transfer.TransferResponse
-import retrofit2.Retrofit
-import retrofit2.Response
 import javax.inject.Inject
 
 /**
