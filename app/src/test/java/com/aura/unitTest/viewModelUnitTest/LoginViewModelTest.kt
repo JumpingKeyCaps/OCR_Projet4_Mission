@@ -1,4 +1,4 @@
-package com.aura.UnitTest.viewModelUnitTest
+package com.aura.unitTest.viewModelUnitTest
 
 import com.aura.main.data.repository.LoginRepository
 import com.aura.main.model.login.LoginRequest
@@ -9,6 +9,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -28,6 +29,7 @@ class LoginViewModelTest {
     /**
      * Setup
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setup() {
         Dispatchers.setMain(Dispatchers.Unconfined)

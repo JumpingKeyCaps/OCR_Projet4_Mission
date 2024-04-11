@@ -1,4 +1,4 @@
-package com.aura.UnitTest.repositoryUnitTest
+package com.aura.unitTest.repositoryUnitTest
 
 import com.aura.main.data.repository.LoginRepository
 import com.aura.main.data.service.AuraApiService
