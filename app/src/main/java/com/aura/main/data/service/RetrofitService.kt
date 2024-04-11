@@ -12,7 +12,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 /**
- * The Api Service Interface to communicate with the server.
+ * The Retrofit  Service Interface to communicate with the server.
  */
 interface RetrofitService {
 
