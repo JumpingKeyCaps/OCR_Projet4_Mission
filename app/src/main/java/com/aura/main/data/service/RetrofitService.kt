@@ -14,7 +14,7 @@ import retrofit2.http.Path
 /**
  * The Api Service Interface to communicate with the server.
  */
-interface ApiService {
+interface RetrofitService {
 
     /**
      * Method for a login request to the server (POST)
