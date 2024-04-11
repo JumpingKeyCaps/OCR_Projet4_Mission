@@ -27,6 +27,7 @@ android {
       isMinifyEnabled = false
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
+
   }
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -63,7 +64,8 @@ dependencies {
   //retrofit + OkHttp3 + Gson
   implementation ("com.squareup.retrofit2:retrofit:2.9.0")
   implementation ("com.squareup.okhttp3:okhttp:4.9.3")
-  implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+  implementation ("com.squareup.moshi:moshi:1.15.0")
+  implementation ("com.squareup.moshi:moshi-kotlin:1.15.0")
 
 
   //tests
