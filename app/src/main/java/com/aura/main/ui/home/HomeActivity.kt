@@ -21,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
+import java.math.RoundingMode
 
 /**
  * The home activity for the app.
@@ -109,7 +110,8 @@ class HomeActivity : AppCompatActivity() {
     homeViewModel.userAccount.onEach { userAccount ->
       // Mise à jour de l'UI basée sur userAccount (si non null)
       if (userAccount != null) {
-        binding.balance.text = "${userAccount.balance}"
+        //on arrondi la balance a 2 chiffres apres la virgule
+        binding.balance.text = "${userAccount.balance.toBigDecimal().setScale(2, RoundingMode.UP).toDouble()}"
       }
     }.launchIn(lifecycleScope)
   }
