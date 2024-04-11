@@ -12,12 +12,8 @@ import javax.inject.Inject
 /**
  * The app API service to communicate with the server.
  */
-class AuraApiService  @Inject constructor(private val retrofit: Retrofit) : ApiService {
+class AuraApiService  @Inject constructor(private val auraNetworkService: AuraNetworkServiceImpl) {
 
-    /**
-     * The ApiService initiate lately with a retrofit instance
-     */
-    private val apiService by lazy { retrofit.create(ApiService::class.java) }
 
     /**
      * Methode to login.
@@ -25,8 +21,8 @@ class AuraApiService  @Inject constructor(private val retrofit: Retrofit) : ApiS
      * @param loginRequest a login request object.
      * @return  a LoginResponse object with the login access state.
      */
-     override suspend fun login(loginRequest: LoginRequest): Response<LoginResponse> {
-        return apiService.login(loginRequest)
+    suspend fun login(loginRequest: LoginRequest): LoginResponse {
+        return auraNetworkService.login(loginRequest)
     }
 
     /**
@@ -35,8 +31,8 @@ class AuraApiService  @Inject constructor(private val retrofit: Retrofit) : ApiS
      * @param transferRequest a transfer request object.
      * @return  a TransferResponse object with the transfer result.
      */
-    override suspend fun transfer(transferRequest: TransferRequest): Response<TransferResponse> {
-        return apiService.transfer(transferRequest)
+    suspend fun transfer(transferRequest: TransferRequest): TransferResponse {
+        return auraNetworkService.transfer(transferRequest)
     }
 
     /**
@@ -45,8 +41,8 @@ class AuraApiService  @Inject constructor(private val retrofit: Retrofit) : ApiS
      * @param id of the user.
      * @return  a UserAccount objects list.
      */
-    override suspend fun getUserAccounts(id: String): Response<List<UserAccount>> {
-        return apiService.getUserAccounts(id)
+    suspend fun getUserAccounts(id: String): List<UserAccount> {
+        return auraNetworkService.getUserAccounts(id)
     }
 
 }
