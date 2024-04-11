@@ -18,14 +18,7 @@ class HomeRepository @Inject constructor(private val auraApiService: AuraApiServ
      */
     suspend fun getUserAccounts(id: String): List<UserAccount> {
         //get the service response
-        val response = auraApiService.getUserAccounts(id)
-        if (!response.isSuccessful) {
-            //fail
-            throw Exception("Error: ${response.code()}")
-        }else{
-            //success
-            return response.body()?: emptyList()
-        }
+        return auraApiService.getUserAccounts(id)
     }
 
 }

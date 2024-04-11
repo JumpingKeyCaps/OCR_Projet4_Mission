@@ -18,8 +18,7 @@ class TransferRepository @Inject constructor(private val auraApiService: AuraApi
      *  @return  a TransferResponse object with the transfer result.
      */
     suspend fun transfer(transferRequest: TransferRequest): TransferResponse {
-        val response = auraApiService.transfer(transferRequest)
-        return response.body() ?: TransferResponse(result = false)
+        return auraApiService.transfer(transferRequest)
     }
 
 }
