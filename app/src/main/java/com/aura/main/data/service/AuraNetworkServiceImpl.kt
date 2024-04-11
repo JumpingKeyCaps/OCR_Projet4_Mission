@@ -1,5 +1,6 @@
 package com.aura.main.data.service
 
+import android.util.Log
 import com.aura.main.model.home.UserAccount
 import com.aura.main.model.login.LoginRequest
 import com.aura.main.model.login.LoginResponse
@@ -14,6 +15,8 @@ class AuraNetworkServiceImpl @Inject constructor(private val retrofit: Retrofit)
 
     override suspend fun login(loginRequest: LoginRequest): LoginResponse {
         val response = retrofitService.login(loginRequest)
+        Log.d("LOGINdebug", "loginANSimpl reply: ${response.body()!!} ")
+
         // Check for successful response
         if (response.isSuccessful) {
             return response.body()!! // Assuming successful response has a body
