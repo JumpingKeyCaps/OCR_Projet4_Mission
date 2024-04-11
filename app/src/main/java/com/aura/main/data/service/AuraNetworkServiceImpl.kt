@@ -10,10 +10,10 @@ import javax.inject.Inject
 
 class AuraNetworkServiceImpl @Inject constructor(private val retrofit: Retrofit) : AuraNetworkService {
 
-    private val apiService by lazy { retrofit.create(ApiService::class.java) }
+    private val retrofitService by lazy { retrofit.create(RetrofitService::class.java) }
 
     override suspend fun login(loginRequest: LoginRequest): LoginResponse {
-        val response = apiService.login(loginRequest)
+        val response = retrofitService.login(loginRequest)
         // Check for successful response
         if (response.isSuccessful) {
             return response.body()!! // Assuming successful response has a body
@@ -24,7 +24,7 @@ class AuraNetworkServiceImpl @Inject constructor(private val retrofit: Retrofit)
     }
 
     override suspend fun transfer(transferRequest: TransferRequest): TransferResponse {
-        val response = apiService.transfer(transferRequest)
+        val response = retrofitService.transfer(transferRequest)
         if (response.isSuccessful) {
             return response.body()!!
         } else {
@@ -34,7 +34,7 @@ class AuraNetworkServiceImpl @Inject constructor(private val retrofit: Retrofit)
     }
 
     override suspend fun getUserAccounts(id: String): List<UserAccount> {
-        val response = apiService.getUserAccounts(id)
+        val response = retrofitService.getUserAccounts(id)
         if (response.isSuccessful) {
             return response.body()!!
         } else {
