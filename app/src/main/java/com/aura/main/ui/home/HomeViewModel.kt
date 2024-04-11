@@ -7,6 +7,7 @@ import com.aura.R
 import com.aura.main.data.repository.HomeRepository
 import com.aura.main.model.home.UserAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -39,7 +40,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
             _etat.value = HomeState.LOADING
 
             //todo DEBUG ONLY -------------
-            //    delay(5000)
+                delay(3000)
             //todo --------------------
 
             try {

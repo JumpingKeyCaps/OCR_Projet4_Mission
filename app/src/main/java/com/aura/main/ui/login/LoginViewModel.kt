@@ -7,6 +7,7 @@ import com.aura.R
 import com.aura.main.data.repository.LoginRepository
 import com.aura.main.model.login.LoginRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -54,7 +55,7 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
                 val loginResponse = loginRepository.login(LoginRequest(identifier, motDePasse))
 
                 //todo REMOVE THIS FAKE DELAY --------------
-                //   delay(3000)
+                   delay(3000)
                 //todo -------------------------------------
 
                 if(loginResponse.granted){

@@ -7,6 +7,7 @@ import com.aura.R
 import com.aura.main.data.repository.TransferRepository
 import com.aura.main.model.transfer.TransferRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -62,7 +63,7 @@ class TransferViewModel @Inject constructor(private val transferRepository: Tran
                 val transferResponse = transferRepository.transfer(TransferRequest(senderId, receiverId,amount.toDouble()))
 
                 //todo REMOVE THIS FAKE DELAY --------------
-                //   delay(3000)
+                   delay(3000)
                 //todo -------------------------------------
 
                 if(transferResponse.result){
