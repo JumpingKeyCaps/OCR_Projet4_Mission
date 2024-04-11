@@ -1,5 +1,6 @@
 package com.aura.main.ui.login
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -68,6 +69,7 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
             } catch (e: Exception) {
                 // Handle network errors, server errors, etc.
                 _etat.value = ConnexionState.ERREUR_CONNEXION
+                Log.d("LOGINdebug", "seConnecter: ERROR : ${e.toString()} ")
             }
         }
     }
