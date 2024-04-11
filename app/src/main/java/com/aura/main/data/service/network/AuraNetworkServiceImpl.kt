@@ -1,4 +1,4 @@
-package com.aura.main.data.service
+package com.aura.main.data.service.network
 
 import android.util.Log
 import com.aura.main.model.home.UserAccount
@@ -9,7 +9,8 @@ import com.aura.main.model.transfer.TransferResponse
 import retrofit2.Retrofit
 import javax.inject.Inject
 
-class AuraNetworkServiceImpl @Inject constructor(private val retrofit: Retrofit) : AuraNetworkService {
+class AuraNetworkServiceImpl @Inject constructor(private val retrofit: Retrofit) :
+    AuraNetworkService {
 
     private val retrofitService by lazy { retrofit.create(RetrofitService::class.java) }
 
