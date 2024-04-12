@@ -1,16 +1,18 @@
 package com.aura.main.ui.transfer
 
-import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aura.R
 import com.aura.main.data.repository.TransferRepository
+import com.aura.main.model.transfer.TransferLCE
 import com.aura.main.model.transfer.TransferRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.net.ConnectException
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 /**
@@ -19,9 +21,9 @@ import javax.inject.Inject
 @HiltViewModel
 class TransferViewModel @Inject constructor(private val transferRepository: TransferRepository) : ViewModel()  {
 
-    /** The transfer state Stateflow. */
-    private val _etat = MutableStateFlow(TransferState.IDLE)
-    val etat: StateFlow<TransferState> = _etat
+    /** The Transfer LCE Stateflow. */
+    private val _lceState = MutableStateFlow<TransferLCE>(TransferLCE.TransferContent(fieldIsOK = false, result = false))
+    val lceState: StateFlow<TransferLCE> = _lceState
 
 
     /**
@@ -30,21 +32,23 @@ class TransferViewModel @Inject constructor(private val transferRepository: Tran
      * @param receiverID the target Id account to the transfer.
      * @param amount the ammount of money to transfer.
      */
-    fun verifierTransferChamps(receiverID: String, amount: String) {
+    fun fieldsCheck(receiverID: String, amount: String){
         if (receiverID.isNotEmpty() && amount.isNotEmpty()) {
             try{
                 amount.toDouble()
                 //champ de saisie Ok !
-                _etat.value = TransferState.FIELDS_OK
+                _lceState.value = TransferLCE.TransferContent(fieldIsOK = true, result = false)
             }catch (e:NumberFormatException ){
                 //champ de saisie manquant
-                _etat.value = TransferState.IDLE
+                _lceState.value = TransferLCE.TransferError(R.string.transfer_conn_error_amount)
             }
         } else {
             //champ de saisie manquant
-            _etat.value = TransferState.IDLE
+            _lceState.value = TransferLCE.TransferError(R.string.transfer_conn_error_missingfields)
         }
     }
+
+
 
     /**
      * Method to Transfer the user money.
@@ -58,41 +62,31 @@ class TransferViewModel @Inject constructor(private val transferRepository: Tran
 
         // Use viewModelScope for coroutines related to the Activity lifecycle
         viewModelScope.launch {
-            _etat.value = TransferState.LOADING
+            _lceState.value = TransferLCE.TransferLoading(R.string.transfer_conn_loading)
             try {
                 val transferResponse = transferRepository.transfer(TransferRequest(senderId, receiverId,amount.toDouble()))
 
                 //todo REMOVE THIS FAKE DELAY --------------
-                   delay(3000)
+                delay(3000)
                 //todo -------------------------------------
 
                 if(transferResponse.result){
                     // transfert accepted !
-                    _etat.value = TransferState.SUCCESS
+                    _lceState.value = TransferLCE.TransferContent(fieldIsOK = true, result = true)
                 }else{
                     //transfer refused.
-                    _etat.value = TransferState.FAIL
+                    _lceState.value = TransferLCE.TransferError(R.string.transfer_conn_fail)
                 }
             } catch (e: Exception) {
                 // Handle network errors, server errors, etc.
-                _etat.value = TransferState.ERROR
+                when (e) {
+                    is SocketTimeoutException -> {_lceState.value = TransferLCE.TransferError(R.string.transfer_conn_error_server)} //server down
+                    is ConnectException -> {_lceState.value = TransferLCE.TransferError(R.string.transfer_conn_error_network)}  // network connexion down
+                    else -> { _lceState.value = TransferLCE.TransferError(R.string.transfer_conn_error_generik)} // other case
+                }
             }
         }
     }
 
-
-    /**
-     * Method to get the transfer informative message to display to the user.
-     * @param transferState the current login state of the activity.
-     */
-    @StringRes
-    fun getTransferInfoMessageToShow(transferState: TransferState): Int {
-        return when(transferState){
-            TransferState.ERROR -> R.string.transfer_conn_error
-            TransferState.FAIL -> R.string.transfer_conn_fail
-            TransferState.LOADING -> R.string.transfer_conn_loading
-            else -> 0
-        }
-    }
 
 }
