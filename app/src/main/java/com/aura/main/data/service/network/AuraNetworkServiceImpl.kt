@@ -9,6 +9,11 @@ import com.aura.main.model.transfer.TransferResponse
 import retrofit2.Retrofit
 import javax.inject.Inject
 
+/**
+ * AuraNetworkService implementation class.
+ *
+ * Redefine all the interface network methods to be use with the instance of retrofit.
+ */
 class AuraNetworkServiceImpl @Inject constructor(private val retrofit: Retrofit) :
     AuraNetworkService {
 

@@ -6,6 +6,9 @@ import com.aura.main.model.login.LoginResponse
 import com.aura.main.model.transfer.TransferRequest
 import com.aura.main.model.transfer.TransferResponse
 
+/**
+ * AuraNetworkService interface with all the network methods.
+ */
 interface AuraNetworkService {
 
     suspend fun login(loginRequest: LoginRequest): LoginResponse
