@@ -1,21 +1,21 @@
 package com.aura.main.ui.login
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.activity.viewModels
+import androidx.annotation.RequiresExtension
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.coroutineScope
 import com.aura.databinding.ActivityLoginBinding
+import com.aura.main.model.login.LoginLCE
 import com.aura.main.ui.home.HomeActivity
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 
 /**
  * The login activity for the app.
@@ -39,7 +39,7 @@ class LoginActivity : AppCompatActivity(){
    */
   private val textWatcher = object : TextWatcher {
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-      updateLoginButtonState() // call to update the button state
+      updateLoginButtonState() // update the button state
     }
     override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) { }
     override fun afterTextChanged(s: Editable) { }
@@ -51,6 +51,7 @@ class LoginActivity : AppCompatActivity(){
    * Called when the activity is create.
    * @param savedInstanceState the bundle of the saved activity state.
    */
+  @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
   override fun onCreate(savedInstanceState: Bundle?){
     super.onCreate(savedInstanceState)
 
@@ -69,9 +70,10 @@ class LoginActivity : AppCompatActivity(){
   /**
    * Method to setup all the used views listener in the activity.
    */
+  @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
   private fun setupViewListeners(){
     //Set the button login listener.
-    binding.login.setOnClickListener { loginViewModel.seConnecter(binding.identifier.text.toString(),binding.password.text.toString()) }
+    binding.login.setOnClickListener { loginViewModel.login(binding.identifier.text.toString(),binding.password.text.toString()) }
 
     //add text watcher to our views
     binding.identifier.addTextChangedListener(textWatcher)
@@ -83,75 +85,60 @@ class LoginActivity : AppCompatActivity(){
    * @param loginViewModel the ViewModel to use to collect the state flow
    */
   private fun loginUiUpdater(loginViewModel: LoginViewModel){
+    //the new way
+    lifecycle.coroutineScope.launch {
+      loginViewModel.lceState.collect { state ->
+        when (state) {
 
-    //on collect notre StateFlow d'etat d'ecran actuel depuis le viewmodel
-    //on lance une coroutine
-
-    loginViewModel.etat.onEach {connexionState ->
-
-      // Mettre à jour l'interface utilisateur en fonction de l'état de connexion
-      when (connexionState) {
-
-        ConnexionState.INITIAL -> {
-          withContext(Dispatchers.Main) {
-            binding.login.isEnabled = false
-          }
-        }
-
-        ConnexionState.CHAMPS_REMPLIS -> {
-          withContext(Dispatchers.Main) {
-            binding.login.isEnabled = true
-          }
-        }
-
-        ConnexionState.ERREUR_CONNEXION -> {
-          withContext(Dispatchers.Main) {
-            Snackbar.make(binding.root,loginViewModel.getLoginInfoMessageToShow(ConnexionState.ERREUR_CONNEXION) , Snackbar.LENGTH_LONG).show()
-            binding.loading.visibility = View.GONE
-            binding.login.isEnabled = true
-          }
-        }
-
-        ConnexionState.CONNEXION_EN_COURS -> {
-          withContext(Dispatchers.Main) {
-            Snackbar.make(binding.root,loginViewModel.getLoginInfoMessageToShow(ConnexionState.CONNEXION_EN_COURS) , Snackbar.LENGTH_SHORT).show()
+          is LoginLCE.LoginLoading -> {
+            Snackbar.make(binding.root,state.loadingMessage , Snackbar.LENGTH_SHORT).show()
             binding.loading.visibility = View.VISIBLE
             binding.login.isEnabled = false
             binding.identifier.clearFocus()
             binding.password.clearFocus()
           }
-        }
 
-        ConnexionState.CONNEXION_ECHEC -> {
-          withContext(Dispatchers.Main) {
-            Snackbar.make(binding.root,loginViewModel.getLoginInfoMessageToShow(ConnexionState.CONNEXION_ECHEC) , Snackbar.LENGTH_LONG).show()
+          is LoginLCE.LoginCurrent -> {
+            binding.loading.visibility = View.GONE
+            //FIELDS OK !
+            if(state.fieldIsOK){
+              if(state.granted){
+                //SUCCESS LOGIN !
+                binding.login.isEnabled = false
+                val intent = Intent(this@LoginActivity, HomeActivity::class.java)
+                //add user ID to the intent extra
+                intent.putExtra("userId", binding.identifier.text.toString())
+                startActivity(intent)
+                finish()
+              }else{
+                //ready to login (unlock button)
+                binding.login.isEnabled = true
+              }
+            }else{
+              //FIELDS NOT OK  (lock button login)
+              binding.login.isEnabled = false
+            }
+          }
+
+
+          is LoginLCE.LoginError -> {
+            Snackbar.make(binding.root,state.errorMessage , Snackbar.LENGTH_LONG).show()
             binding.loading.visibility = View.GONE
             binding.login.isEnabled = true
           }
+
         }
 
-
-        ConnexionState.CONNEXION_REUSSIE -> {
-          withContext(Dispatchers.Main) {
-            binding.loading.visibility = View.GONE
-            val intent = Intent(this@LoginActivity, HomeActivity::class.java)
-            //add user ID to the intent extra
-            intent.putExtra("userId", binding.identifier.text.toString())
-            startActivity(intent)
-            finish()
-          }
-        }
       }
-    }.launchIn(lifecycleScope)
+    }
 
   }
-
 
   /**
    * Method to update the state of the login button.
    *  - this method call the viewmodel methode to verify if all condition to login is ok
    * to update the current screen state (and unlock the button)
    */
-  private fun updateLoginButtonState() = loginViewModel.verifierChamps(binding.identifier.text.toString(), binding.password.text.toString())
+  private fun updateLoginButtonState() = loginViewModel.fieldsCheck(binding.identifier.text.toString(), binding.password.text.toString())
 
 }
