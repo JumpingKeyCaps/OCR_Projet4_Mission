@@ -1,16 +1,21 @@
 package com.aura.main.ui.home
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aura.R
 import com.aura.main.data.repository.HomeRepository
+import com.aura.main.model.home.HomeLCE
 import com.aura.main.model.home.UserAccount
+import com.aura.main.model.login.LoginLCE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.net.ConnectException
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 /**
@@ -19,60 +24,53 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val homeRepository: HomeRepository) : ViewModel()  {
-    /** The Home state Stateflow. */
-    private val _etat = MutableStateFlow(HomeState.IDLE)
-    val etat: StateFlow<HomeState> = _etat
+
+    /** The Home LCE Stateflow. */
+    private val _lceState = MutableStateFlow<HomeLCE>(HomeLCE.HomeLoading(R.string.home_conn_loading))
+    val lceState: StateFlow<HomeLCE> = _lceState
 
     /**
-     * The User Account StateFlow
-     */
-    private val _userAccount = MutableStateFlow<UserAccount?>(null)
-    val userAccount: StateFlow<UserAccount?> = _userAccount
-
-
-    /**
-     * Method to get the UserAccount from the user ID
+     * Method to get the main UserAccount of the user from his user ID.
      *
      * @param idUser the User ID.
      */
-    fun getUserAccounts(idUser: String) {
+    fun getUserAccount(idUser: String){
         viewModelScope.launch {
-            _etat.value = HomeState.LOADING
+            //set the state LCE to loading mode
+            _lceState.value = HomeLCE.HomeLoading(R.string.home_conn_loading)
 
             //todo DEBUG ONLY -------------
-                delay(3000)
+            delay(2000)
             //todo --------------------
 
             try {
                 //call the repository methode to get the user Accounts list
                 val userAccounts = homeRepository.getUserAccounts(idUser)
-                // get the main account from the list returned
+                // Try to the main account from the list returned
                 val mainAccount = userAccounts.firstOrNull { it.main }
-                _userAccount.value = mainAccount
                 if(mainAccount!=null){
-                    _etat.value = HomeState.SUCCESS
+                    //SUCCESS ! to fetch the main account
+                    //update the state content with the responded user money balance.
+                    _lceState.value = HomeLCE.HomeContent(mainAccount.balance)
                 }else{
-                    _etat.value = HomeState.ERROR
+                    //FAIL ! to find main account.
+                    _lceState.value = HomeLCE.HomeError(R.string.home_conn_error_failToFindMainAccount)
                 }
             } catch (e: Exception) {
-                _etat.value = HomeState.ERROR
+                Log.d("HOMEdebug", "Home : ERROR : ${e.toString()} ")
+
+                when (e) {
+                    is SocketTimeoutException -> {_lceState.value = HomeLCE.HomeError(R.string.home_conn_error_server)} //server down
+                    is ConnectException -> {_lceState.value = HomeLCE.HomeError(R.string.home_conn_error_network)}  // network connexion down
+                    else -> { _lceState.value = HomeLCE.HomeError(R.string.home_conn_error_generik)} // other case
+                }
             }
+
+
         }
     }
 
 
-    /**
-     * Method to get the informative message to display to the user.
-     * @param homeState the current home state of the activity.
-     * @return the reference of the string resource to use.
-     */
-    @StringRes
-    fun getHomeInfoMessageToShow(homeState: HomeState): Int {
-        return when(homeState){
-            HomeState.LOADING -> R.string.home_conn_loading
-            HomeState.ERROR -> R.string.home_conn_error
-            else -> 0
-        }
-    }
+
 
 }
