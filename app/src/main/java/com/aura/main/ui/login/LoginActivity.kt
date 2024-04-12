@@ -98,7 +98,7 @@ class LoginActivity : AppCompatActivity(){
             binding.password.clearFocus()
           }
 
-          is LoginLCE.LoginCurrent -> {
+          is LoginLCE.LoginContent -> {
             binding.loading.visibility = View.GONE
             //FIELDS OK !
             if(state.fieldIsOK){

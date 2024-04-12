@@ -26,7 +26,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(private val loginRepository: LoginRepository) : ViewModel()  {
 
     /** The Login LCE Stateflow. */
-    private val _lceState = MutableStateFlow<LoginLCE>(LoginLCE.LoginCurrent(fieldIsOK = false,granted = false))
+    private val _lceState = MutableStateFlow<LoginLCE>(LoginLCE.LoginContent(fieldIsOK = false,granted = false))
     val lceState: StateFlow<LoginLCE> = _lceState
 
 
@@ -51,7 +51,7 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
 
                 if(loginResponse.granted){
                     // Connexion accepted ! successful login response
-                    _lceState.value = LoginLCE.LoginCurrent(fieldIsOK = true, granted = true)
+                    _lceState.value = LoginLCE.LoginContent(fieldIsOK = true, granted = true)
                 }else{
                     //Connexion refused.
                     _lceState.value = LoginLCE.LoginError(R.string.login_conn_fail)
@@ -78,10 +78,10 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
     fun fieldsCheck(identifier: String, password: String){
         if (identifier.isNotEmpty() && password.isNotEmpty()) {
             //champ de saisie Ok !
-            _lceState.value = LoginLCE.LoginCurrent(fieldIsOK = true, granted = false)
+            _lceState.value = LoginLCE.LoginContent(fieldIsOK = true, granted = false)
         } else {
             //champ de saisie manquant
-            _lceState.value = LoginLCE.LoginCurrent(fieldIsOK = false, granted = false)
+            _lceState.value = LoginLCE.LoginContent(fieldIsOK = false, granted = false)
         }
     }
 
