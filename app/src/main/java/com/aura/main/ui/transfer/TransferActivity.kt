@@ -7,14 +7,12 @@ import android.text.TextWatcher
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.coroutineScope
 import com.aura.databinding.ActivityTransferBinding
+import com.aura.main.model.transfer.TransferLCE
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 
 /**
  * The transfer activity.
@@ -48,7 +46,6 @@ class TransferActivity : AppCompatActivity() {
    * The user Identifier.
    */
   private lateinit var userId: String
-
 
 
   /**
@@ -91,68 +88,46 @@ class TransferActivity : AppCompatActivity() {
    * @param transferViewModel the ViewModel to use to collect the state flow
    */
   private fun transferUiUpdater(transferViewModel: TransferViewModel){
+    lifecycle.coroutineScope.launch {
+      transferViewModel.lceState.collect { state ->
+        when (state) {
 
-    transferViewModel.etat.onEach {transferState ->
-
-      // Mettre à jour l'interface utilisateur en fonction de l'état de connexion
-      when (transferState) {
-
-        TransferState.IDLE -> {
-          withContext(Dispatchers.Main) {
-            binding.loading.visibility = View.GONE
-            binding.transfer.isEnabled = false
-          }
-        }
-
-
-        TransferState.FIELDS_OK -> {
-          withContext(Dispatchers.Main) {
-            binding.loading.visibility = View.GONE
-            binding.transfer.isEnabled = true
-
-          }
-
-        }
-
-        TransferState.LOADING -> {
-          withContext(Dispatchers.Main) {
-            Snackbar.make(binding.root,transferViewModel.getTransferInfoMessageToShow(TransferState.LOADING) , Snackbar.LENGTH_SHORT).show()
+          is TransferLCE.TransferLoading -> {
+            Snackbar.make(binding.root,state.message , Snackbar.LENGTH_SHORT).show()
             binding.loading.visibility = View.VISIBLE
             binding.transfer.isEnabled = false
             binding.amount.clearFocus()
             binding.recipient.clearFocus()
           }
-        }
 
+          is TransferLCE.TransferContent -> {
+            binding.loading.visibility = View.GONE
+            //FIELDS OK !
+            if(state.fieldIsOK){
+              if(state.result){
+                //SUCCESS Transfer !
+                binding.transfer.isEnabled = false
+                setResult(Activity.RESULT_OK)
+                finish()
+              }else{
+                //ready to login (unlock button)
+                binding.transfer.isEnabled = true
+              }
+            }else{
+              //FIELDS NOT OK  (lock button login)
+              binding.transfer.isEnabled = false
+            }
+          }
 
-        TransferState.ERROR -> {
-          withContext(Dispatchers.Main) {
-            Snackbar.make(binding.root,transferViewModel.getTransferInfoMessageToShow(TransferState.ERROR) , Snackbar.LENGTH_LONG).show()
+          is TransferLCE.TransferError -> {
+            Snackbar.make(binding.root,state.errorMessage , Snackbar.LENGTH_LONG).show()
             binding.loading.visibility = View.GONE
             binding.transfer.isEnabled = true
-
-          }
-        }
-
-        TransferState.FAIL -> {
-          withContext(Dispatchers.Main) {
-            Snackbar.make(binding.root,transferViewModel.getTransferInfoMessageToShow(TransferState.FAIL) , Snackbar.LENGTH_LONG).show()
-            binding.loading.visibility = View.GONE
-            binding.transfer.isEnabled = true
-          }
-        }
-
-
-        TransferState.SUCCESS -> {
-          withContext(Dispatchers.Main) {
-            binding.loading.visibility = View.GONE
-            binding.transfer.isEnabled = false
-            setResult(Activity.RESULT_OK)
-            finish()
           }
         }
       }
-    }.launchIn(lifecycleScope)
+    }
+
   }
 
   /**
@@ -160,6 +135,6 @@ class TransferActivity : AppCompatActivity() {
    * this method call the viewmodel methode to verify if all condition to the transfer is ok
    * to update the current screen state (and unlock the button)
    */
-  private fun updateTransferButtonState() = transferViewModel.verifierTransferChamps(binding.recipient.text.toString(), binding.amount.text.toString())
+  private fun updateTransferButtonState() = transferViewModel.fieldsCheck(binding.recipient.text.toString(), binding.amount.text.toString())
 
 }
