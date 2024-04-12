@@ -15,9 +15,16 @@
 
 
 
-  <string name="login_conn_error">A network error occurred while connecting, please check your internet connexion and retry.</string>
-  <string name="login_conn_running">Connection in progress ...</string>
-  <string name="login_conn_fail">Login fail ! Wrong Password or ID.</string>
+  <string name="login_conn_error"></string>
+
+  <string name="login_conn_error_server">Toutes nos excuses le serveur d\'Aura semble rencontrer des difficultes, essayer à nouveau.</string>
+  <string name="login_conn_error_network">Pas de Connexion internet.\nVeuillez verifier votre connexion reseaux et reessayer.</string>
+  <string name="login_conn_error_generik">Oups! une erreur impromptu. essayer à nouveau. </string>
+  <string name="login_conn_running">Connexion a votre compte ...</string>
+  <string name="login_conn_fail">Connexion refusée !\nVeuillez vérifier votre identifiant et votre mot de passe.</string>
+
+
+
 
 
   <string name="home_conn_error">Failed to load your main account, please try again.</string>
