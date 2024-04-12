@@ -3,7 +3,7 @@ package com.aura.main.model.login
 /**
  * LCE for the login activity
  *
- * Classic Login Current Error pattern to Defines the different states of the login activity.
+ *  Login Current Error pattern to Defines the different states of the login activity.
  *
  *  - LoginLoading : the state when the activity is loading some data.
  *  - LoginSuccess : the state when the activity as successfully load data.
