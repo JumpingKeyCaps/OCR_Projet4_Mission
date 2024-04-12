@@ -10,16 +10,20 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
 import com.aura.R
 import com.aura.databinding.ActivityHomeBinding
+import com.aura.main.model.home.HomeLCE
 import com.aura.main.ui.login.LoginActivity
 import com.aura.main.ui.transfer.TransferActivity
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.math.RoundingMode
 
@@ -64,14 +68,11 @@ class HomeActivity : AppCompatActivity() {
     binding = ActivityHomeBinding.inflate(layoutInflater)
     setContentView(binding.root)
 
-    //on recup l'id user dans le extra de l'intent
-    userId = intent.getStringExtra("userId")?:""
+    //retrieve the user ID
+    getUserId()
 
     //Setup the listeners
     setupViewsListener()
-
-    //on collect l'user account et on update l'Ui
-    userAccountUpdater()
 
     //on collect notre Etat pour le homescreen
     homeUiUpdater()
@@ -79,6 +80,16 @@ class HomeActivity : AppCompatActivity() {
     //call to get the get useraccount
     getUserAccount(userId)
   }
+
+
+  /**
+   * Method to retrieve the user Id from the intent
+   */
+  private fun getUserId(){
+    //on recup l'id user dans le extra de l'intent
+    userId = intent.getStringExtra("userId")?:""
+  }
+
 
   /**
    * Method to setup all the views listener.
@@ -100,55 +111,29 @@ class HomeActivity : AppCompatActivity() {
    * @param iduser the ID of the user.
    */
   private fun getUserAccount(iduser: String){
-    homeViewModel.getUserAccounts(iduser)
+    homeViewModel.getUserAccount(iduser)
   }
 
   /**
    * Method to update the User Account UI.
    */
-  private fun userAccountUpdater(){
-    homeViewModel.userAccount.onEach { userAccount ->
-      // Mise à jour de l'UI basée sur userAccount (si non null)
-      if (userAccount != null) {
-        //on arrondi la balance a 2 chiffres apres la virgule
-        binding.balance.text = "${userAccount.balance.toBigDecimal().setScale(2, RoundingMode.UP).toDouble()}"
-      }
-    }.launchIn(lifecycleScope)
-  }
-
-  /**
-   * Method to update the Home screen UI.
-   */
   private fun homeUiUpdater(){
-    homeViewModel.etat.onEach { etat ->
-      // Mise à jour de l'UI basée sur l'etat du screen home
-      when(etat){
-        HomeState.IDLE -> {
-          withContext(Dispatchers.Main) {
-            binding.title.visibility = View.VISIBLE
-            binding.balance.visibility = View.VISIBLE
-            binding.loadingHome.visibility = View.GONE
-            binding.tryAgainButton.visibility = View.GONE
-            binding.tryAgainButton.isEnabled = false
-            binding.transfer.isEnabled = false
-          }
-        }
+    lifecycle.coroutineScope.launch {
+      homeViewModel.lceState.collect{ state ->
+        when (state) {
 
-        HomeState.LOADING -> {
-          withContext(Dispatchers.Main) {
-            Snackbar.make(binding.root,homeViewModel.getHomeInfoMessageToShow(HomeState.LOADING) , Snackbar.LENGTH_SHORT).show()
+          is HomeLCE.HomeLoading -> {
+            Snackbar.make(binding.root,state.loadingMessage , Snackbar.LENGTH_SHORT).show()
+            binding.loadingHome.visibility = View.VISIBLE
             binding.title.visibility = View.GONE
             binding.balance.visibility = View.GONE
-            binding.loadingHome.visibility = View.VISIBLE
             binding.tryAgainButton.visibility = View.GONE
             binding.tryAgainButton.isEnabled = false
             binding.transfer.isEnabled = false
           }
 
-        }
-
-        HomeState.SUCCESS -> {
-          withContext(Dispatchers.Main) {
+          is HomeLCE.HomeContent -> {
+            binding.balance.text = "${state.userBalance.toBigDecimal().setScale(2, RoundingMode.UP).toDouble()}"
             binding.title.visibility = View.VISIBLE
             binding.balance.visibility = View.VISIBLE
             binding.loadingHome.visibility = View.GONE
@@ -157,11 +142,8 @@ class HomeActivity : AppCompatActivity() {
             binding.transfer.isEnabled = true
           }
 
-        }
-
-        HomeState.ERROR -> {
-          withContext(Dispatchers.Main) {
-            Snackbar.make(binding.root,homeViewModel.getHomeInfoMessageToShow(HomeState.ERROR) , Snackbar.LENGTH_LONG).show()
+          is HomeLCE.HomeError -> {
+            Snackbar.make(binding.root,state.errorMessage , Snackbar.LENGTH_LONG).show()
             binding.title.visibility = View.GONE
             binding.balance.visibility = View.GONE
             binding.loadingHome.visibility = View.GONE
@@ -172,8 +154,35 @@ class HomeActivity : AppCompatActivity() {
 
         }
       }
-    }.launchIn(lifecycleScope)
+    }
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   /**
    * Method to the create the Option Menu.
