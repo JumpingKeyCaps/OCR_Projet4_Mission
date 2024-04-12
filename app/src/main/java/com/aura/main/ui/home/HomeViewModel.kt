@@ -1,16 +1,12 @@
 package com.aura.main.ui.home
 
 import android.util.Log
-import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aura.R
 import com.aura.main.data.repository.HomeRepository
 import com.aura.main.model.home.HomeLCE
-import com.aura.main.model.home.UserAccount
-import com.aura.main.model.login.LoginLCE
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -38,10 +34,6 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         viewModelScope.launch {
             //set the state LCE to loading mode
             _lceState.value = HomeLCE.HomeLoading(R.string.home_conn_loading)
-
-            //todo DEBUG ONLY -------------
-            delay(2000)
-            //todo --------------------
 
             try {
                 //call the repository methode to get the user Accounts list

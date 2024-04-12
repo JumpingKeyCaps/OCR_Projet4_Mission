@@ -10,7 +10,6 @@ import com.aura.main.data.repository.LoginRepository
 import com.aura.main.model.login.LoginLCE
 import com.aura.main.model.login.LoginRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -44,10 +43,6 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
 
             try {
                 val loginResponse = loginRepository.login(LoginRequest(identifier, password))
-
-                //todo REMOVE THIS FAKE DELAY --------------
-                delay(2000)
-                //todo -------------------------------------
 
                 if(loginResponse.granted){
                     // Connexion accepted ! successful login response
