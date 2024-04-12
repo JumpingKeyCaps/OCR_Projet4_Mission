@@ -15,36 +15,30 @@
 
 
 
-  <string name="login_conn_error"></string>
-
+  <!-- login  messages -->
   <string name="login_conn_error_server">Toutes nos excuses le serveur d\'Aura semble rencontrer des difficultes, essayer à nouveau.</string>
   <string name="login_conn_error_network">Pas de Connexion internet.\nVeuillez verifier votre connexion reseaux et reessayer.</string>
   <string name="login_conn_error_generik">Oups! une erreur impromptu. essayer à nouveau. </string>
   <string name="login_conn_running">Connexion a votre compte ...</string>
   <string name="login_conn_fail">Connexion refusée !\nVeuillez vérifier votre identifiant et votre mot de passe.</string>
 
-
-
-
-
-  <string name="home_conn_error"></string>
-
+  <!-- home messages -->
   <string name="home_conn_loading">Chargement de votre compte principal ...</string>
   <string name="home_conn_error_failToFindMainAccount">Echec du chargement de votre compte principal, veuillez réessayer.</string>
   <string name="home_conn_error_server">Toutes nos excuses le serveur d\'Aura semble rencontrer des difficultes, essayer à nouveau.</string>
   <string name="home_conn_error_network">Pas de Connexion internet.\nVeuillez verifier votre connexion reseaux et reessayer.</string>
   <string name="home_conn_error_generik">Oups! Impossible de recuperer votre compte principal.</string>
 
+  <!-- Transfer messages -->
+  <string name="transfer_conn_loading">Transfer en cour ...</string>
+  <string name="transfer_conn_fail">Echec du transfer, veuillez réessayer.</string>
+  <string name="transfer_conn_error_amount">Veuillez saisir un montant valide pour le transfer.</string>
+  <string name="transfer_conn_error_missingfields">Veuillez vérifier vos information saisies.</string>
+  <string name="transfer_conn_error_network">Pas de Connexion internet.\nVeuillez verifier votre connexion reseaux et reessayer.</string>
+  <string name="transfer_conn_error_server">Toutes nos excuses le serveur d\'Aura semble rencontrer des difficultes, essayer à nouveau.</string>
+  <string name="transfer_conn_error_generik">Oups! Impossible d\'effectuer se transfer depuis votre compte principal</string>
 
-
-
-
-  <string name="try_againButton">Try again</string>
-
-  <string name="transfer_conn_error">A network error occurred while transferring, please check your internet connexion and retry.</string>
-  <string name="transfer_conn_fail">Failed to transfer money from your account, please try again.</string>
-  <string name="transfer_conn_loading">Transfer in progress ...</string>
-
-
+  <!-- bouton retry -->
+  <string name="try_againButton">Retry</string>
 
 </resources>
