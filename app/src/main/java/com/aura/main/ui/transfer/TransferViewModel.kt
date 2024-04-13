@@ -4,14 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aura.R
 import com.aura.main.data.repository.TransferRepository
+import com.aura.main.data.service.network.NetworkException
 import com.aura.main.model.transfer.TransferLCE
 import com.aura.main.model.transfer.TransferRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.net.ConnectException
-import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 /**
@@ -48,7 +47,6 @@ class TransferViewModel @Inject constructor(private val transferRepository: Tran
     }
 
 
-
     /**
      * Method to Transfer the user money.
      *
@@ -57,8 +55,6 @@ class TransferViewModel @Inject constructor(private val transferRepository: Tran
      * @param amount the money to transfer.
      */
     fun transfer(senderId: String, receiverId: String, amount: String) {
-
-
         // Use viewModelScope for coroutines related to the Activity lifecycle
         viewModelScope.launch {
             _lceState.value = TransferLCE.TransferLoading(R.string.transfer_conn_loading)
@@ -75,9 +71,13 @@ class TransferViewModel @Inject constructor(private val transferRepository: Tran
             } catch (e: Exception) {
                 // Handle network errors, server errors, etc.
                 when (e) {
-                    is SocketTimeoutException -> {_lceState.value = TransferLCE.TransferError(R.string.transfer_conn_error_server)} //server down
-                    is ConnectException -> {_lceState.value = TransferLCE.TransferError(R.string.transfer_conn_error_network)}  // network connexion down
-                    else -> { _lceState.value = TransferLCE.TransferError(R.string.transfer_conn_error_generik)} // other case
+                    is NetworkException.ServerErrorException ->{_lceState.value = TransferLCE.TransferError(R.string.conn_error_server_spe)}
+                    is NetworkException.NetworkConnectionException  ->{
+                        if(e.isSocketTimeout) _lceState.value = TransferLCE.TransferError(R.string.transfer_conn_error_server)
+                        if(e.isConnectFail) _lceState.value = TransferLCE.TransferError(R.string.transfer_conn_error_network)
+                    }
+                    is NetworkException.UnknownNetworkException  ->{ _lceState.value = TransferLCE.TransferError(R.string.conn_error_network_generik)}
+                    else -> { _lceState.value = TransferLCE.TransferError(R.string.transfer_conn_error_generik)} // other case of error for login
                 }
             }
         }
