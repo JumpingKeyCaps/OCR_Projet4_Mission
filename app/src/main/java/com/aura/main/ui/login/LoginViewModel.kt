@@ -1,20 +1,18 @@
 package com.aura.main.ui.login
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresExtension
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aura.R
 import com.aura.main.data.repository.LoginRepository
+import com.aura.main.data.service.network.NetworkException
 import com.aura.main.model.login.LoginLCE
 import com.aura.main.model.login.LoginRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.net.ConnectException
-import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 
@@ -40,10 +38,8 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
         // Use viewModelScope for coroutines related to the Activity lifecycle
         viewModelScope.launch {
             _lceState.value = LoginLCE.LoginLoading(R.string.login_conn_running)
-
             try {
                 val loginResponse = loginRepository.login(LoginRequest(identifier, password))
-
                 if(loginResponse.granted){
                     // Connexion accepted ! successful login response
                     _lceState.value = LoginLCE.LoginContent(fieldIsOK = true, granted = true)
@@ -53,12 +49,14 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
                 }
             } catch (e: Exception) {
                 // Handle network errors, server errors, etc.
-                Log.d("LOGINdebug", "login: ERROR : ${e.toString()} ")
-
                 when (e) {
-                    is SocketTimeoutException -> {_lceState.value = LoginLCE.LoginError(R.string.login_conn_error_server)} //server down
-                    is ConnectException -> {_lceState.value = LoginLCE.LoginError(R.string.login_conn_error_network)}  // network connexion down
-                    else -> { _lceState.value = LoginLCE.LoginError(R.string.login_conn_error_generik)} // other case
+                    is NetworkException.ServerErrorException ->{_lceState.value = LoginLCE.LoginError(R.string.conn_error_server_spe)}
+                    is NetworkException.NetworkConnectionException  ->{
+                        if(e.isSocketTimeout) _lceState.value = LoginLCE.LoginError(R.string.login_conn_error_server)
+                        if(e.isConnectFail) _lceState.value = LoginLCE.LoginError(R.string.login_conn_error_network)
+                    }
+                    is NetworkException.UnknownNetworkException  ->{ _lceState.value = LoginLCE.LoginError(R.string.conn_error_network_generik)}
+                    else -> { _lceState.value = LoginLCE.LoginError(R.string.login_conn_error_generik)} // other case of error for login
                 }
             }
         }
@@ -79,6 +77,5 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
             _lceState.value = LoginLCE.LoginContent(fieldIsOK = false, granted = false)
         }
     }
-
 
 }
