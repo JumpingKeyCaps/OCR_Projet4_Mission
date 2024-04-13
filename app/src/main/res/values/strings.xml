@@ -15,12 +15,21 @@
 
 
 
+  <!-- global network message exceptions-->
+  <string name="conn_error_server_spe">Les serveur d\'aura rencontre une difficultee.</string>
+  <string name="conn_error_network_generik">Une erreur reseau s\'est produite. essayer à nouveau.</string>
+
+
+
+
   <!-- login  messages -->
   <string name="login_conn_error_server">Toutes nos excuses le serveur d\'Aura semble rencontrer des difficultes, essayer à nouveau.</string>
   <string name="login_conn_error_network">Pas de Connexion internet.\nVeuillez verifier votre connexion reseaux et reessayer.</string>
   <string name="login_conn_error_generik">Oups! une erreur impromptu. essayer à nouveau. </string>
   <string name="login_conn_running">Connexion a votre compte ...</string>
   <string name="login_conn_fail">Connexion refusée !\nVeuillez vérifier votre identifiant et votre mot de passe.</string>
+
+
 
   <!-- home messages -->
   <string name="home_conn_loading">Chargement de votre compte principal ...</string>
