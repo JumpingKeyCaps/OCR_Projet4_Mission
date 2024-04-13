@@ -1,17 +1,15 @@
 package com.aura.main.ui.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aura.R
 import com.aura.main.data.repository.HomeRepository
+import com.aura.main.data.service.network.NetworkException
 import com.aura.main.model.home.HomeLCE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.net.ConnectException
-import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 /**
@@ -34,7 +32,6 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         viewModelScope.launch {
             //set the state LCE to loading mode
             _lceState.value = HomeLCE.HomeLoading(R.string.home_conn_loading)
-
             try {
                 //call the repository methode to get the user Accounts list
                 val userAccounts = homeRepository.getUserAccounts(idUser)
@@ -49,16 +46,17 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
                     _lceState.value = HomeLCE.HomeError(R.string.home_conn_error_failToFindMainAccount)
                 }
             } catch (e: Exception) {
-                Log.d("HOMEdebug", "Home : ERROR : ${e.toString()} ")
-
+                // Handle network errors, server errors, etc.
                 when (e) {
-                    is SocketTimeoutException -> {_lceState.value = HomeLCE.HomeError(R.string.home_conn_error_server)} //server down
-                    is ConnectException -> {_lceState.value = HomeLCE.HomeError(R.string.home_conn_error_network)}  // network connexion down
-                    else -> { _lceState.value = HomeLCE.HomeError(R.string.home_conn_error_generik)} // other case
+                    is NetworkException.ServerErrorException ->{_lceState.value = HomeLCE.HomeError(R.string.conn_error_server_spe)}
+                    is NetworkException.NetworkConnectionException  ->{
+                        if(e.isSocketTimeout) _lceState.value = HomeLCE.HomeError(R.string.home_conn_error_server)
+                        if(e.isConnectFail) _lceState.value = HomeLCE.HomeError(R.string.home_conn_error_network)
+                    }
+                    is NetworkException.UnknownNetworkException  ->{ _lceState.value = HomeLCE.HomeError(R.string.conn_error_network_generik)}
+                    else -> { _lceState.value = HomeLCE.HomeError(R.string.home_conn_error_generik)} // other case of error for login
                 }
             }
-
-
         }
     }
 
