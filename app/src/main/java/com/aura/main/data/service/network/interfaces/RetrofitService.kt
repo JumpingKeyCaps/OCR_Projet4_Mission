@@ -1,4 +1,4 @@
-package com.aura.main.data.service.network
+package com.aura.main.data.service.network.interfaces
 
 import com.aura.main.model.home.UserAccount
 import com.aura.main.model.login.LoginRequest
