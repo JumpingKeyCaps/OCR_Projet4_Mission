@@ -1,4 +1,4 @@
-package com.aura.unitTest.repositoryUnitTest.uiTest
+package com.aura.unitTest.mainTest.uiTest
 
 import com.aura.main.data.repository.LoginRepository
 import com.aura.main.data.service.network.NetworkException

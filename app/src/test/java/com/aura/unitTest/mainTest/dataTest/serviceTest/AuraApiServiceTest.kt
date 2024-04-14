@@ -1,4 +1,4 @@
-package com.aura.unitTest.repositoryUnitTest.dataTest.serviceTest
+package com.aura.unitTest.mainTest.dataTest.serviceTest
 
 import com.aura.main.data.service.AuraApiService
 import com.aura.main.data.service.network.AuraNetworkServiceImpl
