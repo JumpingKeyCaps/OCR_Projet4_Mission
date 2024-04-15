@@ -10,9 +10,9 @@ package com.aura.main.data.service.network
  */
 sealed class NetworkException : Exception(){
 
-    class ServerErrorException(val errorCode: Int) : NetworkException() // the errorCode can be used for more accuracy on the server error message to display (not used in my case).
+    data class ServerErrorException(val errorCode: Int) : NetworkException() // the errorCode can be used for more accuracy on the server error message to display (not used in my case).
 
-    class NetworkConnectionException(val isSocketTimeout: Boolean, val isConnectFail: Boolean) : NetworkException()
+    data class NetworkConnectionException(val isSocketTimeout: Boolean, val isConnectFail: Boolean) : NetworkException()
 
-    class UnknownNetworkException() : NetworkException() // I let an empty constructor free to be customised in case of new unexpected exception in the future of the code evolution.
+    object  UnknownNetworkException: NetworkException()
 }
