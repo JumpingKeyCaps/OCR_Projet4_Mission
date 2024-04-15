@@ -18,10 +18,10 @@ import javax.inject.Inject
  *
  * Redefine all the interface network methods to be use with the instance of retrofit.
  */
-class AuraNetworkServiceImpl @Inject constructor(private val retrofit: Retrofit) :
+class AuraNetworkServiceImpl @Inject constructor(private val retrofitService: RetrofitService) :
     AuraNetworkService {
 
-    private val retrofitService by lazy { retrofit.create(RetrofitService::class.java) }
+
 
     /**
      * Methode to login using retrofit the instance.
