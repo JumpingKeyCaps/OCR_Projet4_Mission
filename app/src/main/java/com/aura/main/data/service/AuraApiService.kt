@@ -1,6 +1,5 @@
 package com.aura.main.data.service
 
-import com.aura.main.data.service.network.AuraNetworkServiceImpl
 import com.aura.main.data.service.network.interfaces.AuraNetworkService
 import com.aura.main.model.home.UserAccount
 import com.aura.main.model.login.LoginRequest
