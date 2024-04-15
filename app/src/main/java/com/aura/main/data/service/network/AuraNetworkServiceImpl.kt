@@ -8,7 +8,6 @@ import com.aura.main.model.login.LoginRequest
 import com.aura.main.model.login.LoginResponse
 import com.aura.main.model.transfer.TransferRequest
 import com.aura.main.model.transfer.TransferResponse
-import retrofit2.Retrofit
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import javax.inject.Inject
