@@ -1,6 +1,7 @@
 package com.aura.main.data.service
 
 import com.aura.main.data.service.network.AuraNetworkServiceImpl
+import com.aura.main.data.service.network.interfaces.AuraNetworkService
 import com.aura.main.model.home.UserAccount
 import com.aura.main.model.login.LoginRequest
 import com.aura.main.model.login.LoginResponse
@@ -11,7 +12,7 @@ import javax.inject.Inject
 /**
  * The app API service to communicate with the server.
  */
-class AuraApiService  @Inject constructor(private val auraNetworkService: AuraNetworkServiceImpl) {
+class AuraApiService  @Inject constructor(private val auraNetworkService: AuraNetworkService) {
 
 
     /**
