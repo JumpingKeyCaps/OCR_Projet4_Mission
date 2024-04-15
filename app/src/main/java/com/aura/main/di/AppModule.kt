@@ -1,5 +1,8 @@
 package com.aura.main.di
 
+import com.aura.main.data.service.network.AuraNetworkServiceImpl
+import com.aura.main.data.service.network.interfaces.AuraNetworkService
+import com.aura.main.data.service.network.interfaces.RetrofitService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -8,6 +11,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import javax.inject.Singleton
 
 
 /**
@@ -30,6 +34,7 @@ object AppModule {
      * @return a retrofit instance ready to use with the good URL and parser.
      */
     @Provides
+    @Singleton
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(AppConfig.BASE_URL)
@@ -37,5 +42,17 @@ object AppModule {
             .build()
     }
 
+    /**
+     * Method to provide the Retrofit instance to use.
+     *
+     * @param retrofit instance to use.
+     * @return a AuraNetworkService ready to use.
+     */
+    @Provides
+    @Singleton
+    fun provideAuraNetworkService(retrofit: Retrofit): AuraNetworkService {
+        val retrofitService = retrofit.create(RetrofitService::class.java)
+        return AuraNetworkServiceImpl(retrofitService)
+    }
 
 }
