@@ -7,7 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.aura.R
 import com.aura.main.data.repository.LoginRepository
 import com.aura.main.data.service.network.NetworkException
-import com.aura.main.model.login.LoginLCE
+import com.aura.main.model.ScreenState
+import com.aura.main.model.login.LoginContent
 import com.aura.main.model.login.LoginRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,8 +24,8 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(private val loginRepository: LoginRepository) : ViewModel()  {
 
     /** The Login LCE Stateflow. */
-    private val _lceState = MutableStateFlow<LoginLCE>(LoginLCE.LoginContent(fieldIsOK = false,granted = false))
-    val lceState: StateFlow<LoginLCE> = _lceState
+    private val _lceState = MutableStateFlow<ScreenState<LoginContent>>(ScreenState.Content(LoginContent(fieldIsOK = false,granted = false)))
+    val lceState: StateFlow<ScreenState<LoginContent>> = _lceState
 
 
     /**
@@ -37,26 +38,26 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
     fun login(identifier: String, password: String){
         // Use viewModelScope for coroutines related to the Activity lifecycle
         viewModelScope.launch {
-            _lceState.value = LoginLCE.LoginLoading(R.string.login_conn_running)
+            _lceState.value = ScreenState.Loading(R.string.login_conn_running)
             try {
                 val loginResponse = loginRepository.login(LoginRequest(identifier, password))
                 if(loginResponse.granted){
                     // Connexion accepted ! successful login response
-                    _lceState.value = LoginLCE.LoginContent(fieldIsOK = true, granted = true)
+                    _lceState.value = ScreenState.Content(LoginContent(fieldIsOK = true,granted = true))
                 }else{
                     //Connexion refused.
-                    _lceState.value = LoginLCE.LoginError(R.string.login_conn_fail)
+                    _lceState.value = ScreenState.Error(R.string.login_conn_fail)
                 }
             } catch (e: Exception) {
                 // Handle network errors, server errors, etc.
                 when (e) {
-                    is NetworkException.ServerErrorException ->{_lceState.value = LoginLCE.LoginError(R.string.conn_error_server_spe)}
+                    is NetworkException.ServerErrorException ->{_lceState.value = ScreenState.Error(R.string.conn_error_server_spe)}
                     is NetworkException.NetworkConnectionException  ->{
-                        if(e.isSocketTimeout) _lceState.value = LoginLCE.LoginError(R.string.login_conn_error_server)
-                        if(e.isConnectFail) _lceState.value = LoginLCE.LoginError(R.string.login_conn_error_network)
+                        if(e.isSocketTimeout) _lceState.value = ScreenState.Error(R.string.login_conn_error_server)
+                        if(e.isConnectFail) _lceState.value = ScreenState.Error(R.string.login_conn_error_network)
                     }
-                    is NetworkException.UnknownNetworkException  ->{ _lceState.value = LoginLCE.LoginError(R.string.conn_error_network_generik)}
-                    else -> { _lceState.value = LoginLCE.LoginError(R.string.login_conn_error_generik)} // other case of error for login
+                    is NetworkException.UnknownNetworkException  ->{ _lceState.value = ScreenState.Error(R.string.conn_error_network_generik)}
+                    else -> { _lceState.value = ScreenState.Error(R.string.login_conn_error_generik)} // other case of error for login
                 }
             }
         }
@@ -71,10 +72,10 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
     fun fieldsCheck(identifier: String, password: String){
         if (identifier.isNotEmpty() && password.isNotEmpty()) {
             //champ de saisie Ok !
-            _lceState.value = LoginLCE.LoginContent(fieldIsOK = true, granted = false)
+            _lceState.value = ScreenState.Content(LoginContent(fieldIsOK = true, granted = false))
         } else {
             //champ de saisie manquant
-            _lceState.value = LoginLCE.LoginContent(fieldIsOK = false, granted = false)
+            _lceState.value = ScreenState.Content(LoginContent(fieldIsOK = false, granted = false))
         }
     }
 
