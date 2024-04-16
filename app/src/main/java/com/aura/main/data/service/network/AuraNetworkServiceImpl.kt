@@ -94,7 +94,7 @@ class AuraNetworkServiceImpl @Inject constructor(private val retrofitService: Re
         return when (e) {
             is SocketTimeoutException -> NetworkException.NetworkConnectionException(isSocketTimeout = true,isConnectFail = false)
             is ConnectException -> NetworkException.NetworkConnectionException(isSocketTimeout = false,isConnectFail = true)
-            else -> NetworkException.UnknownNetworkException()
+            else -> NetworkException.UnknownNetworkException
         }
     }
 
