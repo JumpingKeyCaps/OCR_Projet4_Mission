@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.coroutineScope
 import com.aura.R
 import com.aura.databinding.ActivityTransferBinding
+import com.aura.main.di.AppConstants
 import com.aura.main.model.transfer.TransferLCE
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,11 +22,6 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class TransferActivity : AppCompatActivity() {
 
-
-  companion object {
-    /**  Key for IntentExtra */
-    const val EXTRA_ID_USER = "userId"
-  }
 
 
   /**
@@ -80,7 +76,7 @@ class TransferActivity : AppCompatActivity() {
    */
   private fun getUserId(){
     //on recup l'id user dans le extra de l'intent
-    val userId = intent.getStringExtra(EXTRA_ID_USER)?:getString(R.string.empty_Extra)
+    val userId = intent.getStringExtra(AppConstants.KEY_USER_ID)?:getString(R.string.empty_Extra)
     transferViewModel.updateUserId(userId)
   }
 
