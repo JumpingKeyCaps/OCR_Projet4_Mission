@@ -17,7 +17,7 @@
 
   <!-- global network message exceptions-->
   <string name="conn_error_server_spe">Les serveur d\'aura rencontre une difficultee.</string>
-  <string name="conn_error_network_generik">Une erreur reseau s\'est produite. essayer à nouveau.</string>
+  <string name="conn_error_network_generik">Verifier vos informations et essayer à nouveau.</string>
 
 
 
@@ -40,7 +40,7 @@
 
   <!-- Transfer messages -->
   <string name="transfer_conn_loading">Transfer en cour ...</string>
-  <string name="transfer_conn_fail">Echec du transfer, veuillez réessayer.</string>
+  <string name="transfer_conn_fail">Echec du transfer, veuillez verifier vos informations et réessayer.</string>
   <string name="transfer_conn_error_amount">Veuillez saisir un montant valide pour le transfer.</string>
   <string name="transfer_conn_error_missingfields">Veuillez vérifier vos information saisies.</string>
   <string name="transfer_conn_error_network">Pas de Connexion internet.\nVeuillez verifier votre connexion reseaux et reessayer.</string>
