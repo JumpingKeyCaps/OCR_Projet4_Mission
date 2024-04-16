@@ -1,5 +1,6 @@
 package com.aura.main.ui.home
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aura.R
@@ -17,24 +18,50 @@ import javax.inject.Inject
  * Inject the repository dependency in the constructor
  */
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val homeRepository: HomeRepository) : ViewModel()  {
+class HomeViewModel @Inject constructor(private val homeRepository: HomeRepository, private val savedStateHandle: SavedStateHandle) : ViewModel()  {
+
+
+    /**
+     * The user Id
+     */
+    var userId: String
+    /**
+     * The user key ref
+     */
+    private val IDUSER = "userId"
+
 
     /** The Home LCE Stateflow. */
     private val _lceState = MutableStateFlow<HomeLCE>(HomeLCE.HomeLoading(R.string.home_conn_loading))
     val lceState: StateFlow<HomeLCE> = _lceState
 
+
+
+    init {
+        val savedUserId = savedStateHandle.get<String>(IDUSER) ?: ""
+        userId = savedUserId
+    }
+
+    fun updateUserId(userId: String) {
+        this.userId = userId
+        savedStateHandle[IDUSER] = userId
+    }
+
+
+
+
     /**
      * Method to get the main UserAccount of the user from his user ID.
      *
-     * @param idUser the User ID.
      */
-    fun getUserAccount(idUser: String){
+    fun getUserAccount(){
+
         viewModelScope.launch {
             //set the state LCE to loading mode
             _lceState.value = HomeLCE.HomeLoading(R.string.home_conn_loading)
             try {
                 //call the repository methode to get the user Accounts list
-                val userAccounts = homeRepository.getUserAccounts(idUser)
+                val userAccounts = homeRepository.getUserAccounts(userId)
                 // Try to the main account from the list returned
                 val mainAccount = userAccounts.firstOrNull { it.main }
                 if(mainAccount!=null){
