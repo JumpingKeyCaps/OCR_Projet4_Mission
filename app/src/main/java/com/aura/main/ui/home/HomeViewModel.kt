@@ -25,10 +25,11 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
      * The user Id
      */
     var userId: String
-    /**
-     * The user key ref
-     */
-    private val IDUSER = "userId"
+
+    companion object {
+        /**  Key for savedStateHandle */
+        const val ID_USER = "userId"
+    }
 
 
     /** The Home LCE Stateflow. */
@@ -38,13 +39,13 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
 
     init {
-        val savedUserId = savedStateHandle.get<String>(IDUSER) ?: ""
+        val savedUserId = savedStateHandle.get<String>(ID_USER) ?: ""
         userId = savedUserId
     }
 
     fun updateUserId(userId: String) {
         this.userId = userId
-        savedStateHandle[IDUSER] = userId
+        savedStateHandle[ID_USER] = userId
     }
 
 

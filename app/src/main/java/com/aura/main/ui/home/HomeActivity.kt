@@ -27,6 +27,13 @@ import java.math.RoundingMode
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
 
+
+  companion object {
+    /**  Key for IntentExtra */
+    const val EXTRA_ID_USER = "userId"
+  }
+
+
   /**
    * The binding for the home layout.
    */
@@ -78,7 +85,7 @@ class HomeActivity : AppCompatActivity() {
    */
   private fun getUserId(){
     //on recup l'id user dans le extra de l'intent
-    val userId = intent.getStringExtra(getString(R.string.user_id_Extra))?:getString(R.string.empty_Extra)
+    val userId = intent.getStringExtra(EXTRA_ID_USER)?:getString(R.string.empty_Extra)
     homeViewModel.updateUserId(userId)
   }
 
@@ -94,7 +101,7 @@ class HomeActivity : AppCompatActivity() {
     //listerner sur le bouton transfer
     binding.transfer.setOnClickListener {
       val intent = Intent(this@HomeActivity, TransferActivity::class.java)
-      intent.putExtra(getString(R.string.user_id_Extra), homeViewModel.userId)
+      intent.putExtra(EXTRA_ID_USER, homeViewModel.userId)
       startTransferActivityForResult.launch(intent)}
   }
 
@@ -148,29 +155,6 @@ class HomeActivity : AppCompatActivity() {
       }
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
