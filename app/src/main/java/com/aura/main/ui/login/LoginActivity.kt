@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity(){
 
+
   /**
    * The view binder for the login layout.
    */
@@ -108,7 +109,7 @@ class LoginActivity : AppCompatActivity(){
                 binding.login.isEnabled = false
                 val intent = Intent(this@LoginActivity, HomeActivity::class.java)
                 //add user ID to the intent extra
-                intent.putExtra(getString(R.string.user_id_Extra), binding.identifier.text.toString())
+                intent.putExtra(EXTRA_ID_USER, binding.identifier.text.toString())
                 startActivity(intent)
                 finish()
               }else{
@@ -141,5 +142,14 @@ class LoginActivity : AppCompatActivity(){
    * to update the current screen state (and unlock the button)
    */
   private fun updateLoginButtonState() = loginViewModel.fieldsCheck(binding.identifier.text.toString(), binding.password.text.toString())
+
+
+
+  companion object {
+    /**
+     * Key for IntentExtra
+     */
+    const val EXTRA_ID_USER = "userId"
+  }
 
 }
