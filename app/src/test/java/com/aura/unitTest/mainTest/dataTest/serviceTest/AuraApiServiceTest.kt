@@ -158,7 +158,7 @@ class AuraApiServiceTest  {
     fun `login - throws UnknownNetworkException`() {
         val loginRequest = LoginRequest("1234", "password")
         // Mock the network service to throw an exception on error
-        coEvery { mockNetworkService.login(loginRequest) } throws NetworkException.UnknownNetworkException()
+        coEvery { mockNetworkService.login(loginRequest) } throws NetworkException.UnknownNetworkException
         // Wrap the test logic in runTest for coroutine scope
         runTest {
             // Custom function to verify the exception is thrown
@@ -308,7 +308,7 @@ class AuraApiServiceTest  {
         val transferRequest = TransferRequest("1234", "4567", 10.0)
 
         // Mock the network service to throw NetworkConnectionException
-        coEvery { mockNetworkService.transfer(transferRequest) } throws NetworkException.UnknownNetworkException()
+        coEvery { mockNetworkService.transfer(transferRequest) } throws NetworkException.UnknownNetworkException
 
         // Wrap the test logic in runTest for coroutine scope
         runTest {
@@ -442,7 +442,7 @@ class AuraApiServiceTest  {
         val userId = "123"
 
         // Mock the network service to throw an exception on error
-        coEvery { mockNetworkService.getUserAccounts(userId) } throws NetworkException.UnknownNetworkException()
+        coEvery { mockNetworkService.getUserAccounts(userId) } throws NetworkException.UnknownNetworkException
 
         // Wrap the test logic in runTest for coroutine scope
         runTest {
