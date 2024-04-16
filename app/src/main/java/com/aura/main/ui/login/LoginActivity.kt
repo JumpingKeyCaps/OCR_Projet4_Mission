@@ -10,8 +10,8 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresExtension
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.coroutineScope
-import com.aura.R
 import com.aura.databinding.ActivityLoginBinding
+import com.aura.main.di.AppConstants
 import com.aura.main.model.login.LoginLCE
 import com.aura.main.ui.home.HomeActivity
 import com.google.android.material.snackbar.Snackbar
@@ -109,7 +109,7 @@ class LoginActivity : AppCompatActivity(){
                 binding.login.isEnabled = false
                 val intent = Intent(this@LoginActivity, HomeActivity::class.java)
                 //add user ID to the intent extra
-                intent.putExtra(EXTRA_ID_USER, binding.identifier.text.toString())
+                intent.putExtra(AppConstants.KEY_USER_ID, binding.identifier.text.toString())
                 startActivity(intent)
                 finish()
               }else{
@@ -145,11 +145,5 @@ class LoginActivity : AppCompatActivity(){
 
 
 
-  companion object {
-    /**
-     * Key for IntentExtra
-     */
-    const val EXTRA_ID_USER = "userId"
-  }
 
 }
