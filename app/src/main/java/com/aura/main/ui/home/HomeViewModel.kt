@@ -7,7 +7,8 @@ import com.aura.R
 import com.aura.main.data.repository.HomeRepository
 import com.aura.main.data.service.network.NetworkException
 import com.aura.main.di.AppConstants
-import com.aura.main.model.home.HomeLCE
+import com.aura.main.model.ScreenState
+import com.aura.main.model.home.HomeContent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,8 +31,8 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
 
     /** The Home LCE Stateflow. */
-    private val _lceState = MutableStateFlow<HomeLCE>(HomeLCE.HomeLoading(R.string.home_conn_loading))
-    val lceState: StateFlow<HomeLCE> = _lceState
+    private val _lceState = MutableStateFlow<ScreenState<HomeContent>>(ScreenState.Loading(R.string.home_conn_loading))
+    val lceState: StateFlow<ScreenState<HomeContent>> = _lceState
 
 
     /**
@@ -54,8 +55,6 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     }
 
 
-
-
     /**
      * Method to get the main UserAccount of the user from his user ID.
      *
@@ -64,7 +63,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
         viewModelScope.launch {
             //set the state LCE to loading mode
-            _lceState.value = HomeLCE.HomeLoading(R.string.home_conn_loading)
+            _lceState.value = ScreenState.Loading(R.string.home_conn_loading)
             try {
                 //call the repository methode to get the user Accounts list
                 val userAccounts = homeRepository.getUserAccounts(userId)
@@ -73,21 +72,21 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
                 if(mainAccount!=null){
                     //SUCCESS ! to fetch the main account
                     //update the state content with the responded user money balance.
-                    _lceState.value = HomeLCE.HomeContent(mainAccount.balance)
+                    _lceState.value = ScreenState.Content(HomeContent(userBalance = mainAccount.balance))
                 }else{
                     //FAIL ! to find main account.
-                    _lceState.value = HomeLCE.HomeError(R.string.home_conn_error_failToFindMainAccount)
+                    _lceState.value = ScreenState.Error(R.string.home_conn_error_failToFindMainAccount)
                 }
             } catch (e: Exception) {
                 // Handle network errors, server errors, etc.
                 when (e) {
-                    is NetworkException.ServerErrorException ->{_lceState.value = HomeLCE.HomeError(R.string.conn_error_server_spe)}
+                    is NetworkException.ServerErrorException ->{_lceState.value = ScreenState.Error(R.string.conn_error_server_spe)}
                     is NetworkException.NetworkConnectionException  ->{
-                        if(e.isSocketTimeout) _lceState.value = HomeLCE.HomeError(R.string.home_conn_error_server)
-                        if(e.isConnectFail) _lceState.value = HomeLCE.HomeError(R.string.home_conn_error_network)
+                        if(e.isSocketTimeout) _lceState.value = ScreenState.Error(R.string.home_conn_error_server)
+                        if(e.isConnectFail) _lceState.value = ScreenState.Error(R.string.home_conn_error_network)
                     }
-                    is NetworkException.UnknownNetworkException  ->{ _lceState.value = HomeLCE.HomeError(R.string.conn_error_network_generik)}
-                    else -> { _lceState.value = HomeLCE.HomeError(R.string.home_conn_error_generik)} // other case of error for login
+                    is NetworkException.UnknownNetworkException  ->{ _lceState.value = ScreenState.Error(R.string.conn_error_network_generik)}
+                    else -> { _lceState.value = ScreenState.Error(R.string.home_conn_error_generik)} // other case of error for login
                 }
             }
         }
