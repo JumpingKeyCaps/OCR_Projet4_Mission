@@ -8,6 +8,7 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.coroutineScope
+import com.aura.R
 import com.aura.databinding.ActivityTransferBinding
 import com.aura.main.model.transfer.TransferLCE
 import com.google.android.material.snackbar.Snackbar
@@ -42,10 +43,7 @@ class TransferActivity : AppCompatActivity() {
     override fun afterTextChanged(s: Editable) { }
   }
 
-  /**
-   * The user Identifier.
-   */
-  private lateinit var userId: String
+
 
 
   /**
@@ -60,7 +58,7 @@ class TransferActivity : AppCompatActivity() {
     setContentView(binding.root)
 
     //on recup l'id user dans le extra de l'intent
-    userId = intent.getStringExtra("userId")?:""
+    getUserId()
 
     //Setup all listeners
     setupViewListeners()
@@ -71,11 +69,22 @@ class TransferActivity : AppCompatActivity() {
   }
 
   /**
+   * Method to retrieve the user Id from the intent
+   */
+  private fun getUserId(){
+    //on recup l'id user dans le extra de l'intent
+    val userId = intent.getStringExtra(getString(R.string.user_id_Extra))?:getString(R.string.empty_Extra)
+    transferViewModel.updateUserId(userId)
+  }
+
+
+
+  /**
    * Method to setup all the used views listener in the activity.
    */
   private fun setupViewListeners(){
     //Set the button login listener.
-    binding.transfer.setOnClickListener { transferViewModel.transfer(userId,binding.recipient.text.toString(),binding.amount.text.toString()) }
+    binding.transfer.setOnClickListener { transferViewModel.transfer(binding.recipient.text.toString(),binding.amount.text.toString()) }
 
     //add text watcher to our views
     binding.recipient.addTextChangedListener(textWatcher)
