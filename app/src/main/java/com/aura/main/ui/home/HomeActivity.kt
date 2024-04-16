@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.coroutineScope
 import com.aura.R
 import com.aura.databinding.ActivityHomeBinding
+import com.aura.main.di.AppConstants
 import com.aura.main.model.home.HomeLCE
 import com.aura.main.ui.login.LoginActivity
 import com.aura.main.ui.transfer.TransferActivity
@@ -28,10 +29,6 @@ import java.math.RoundingMode
 class HomeActivity : AppCompatActivity() {
 
 
-  companion object {
-    /**  Key for IntentExtra */
-    const val EXTRA_ID_USER = "userId"
-  }
 
 
   /**
@@ -85,7 +82,7 @@ class HomeActivity : AppCompatActivity() {
    */
   private fun getUserId(){
     //on recup l'id user dans le extra de l'intent
-    val userId = intent.getStringExtra(EXTRA_ID_USER)?:getString(R.string.empty_Extra)
+    val userId = intent.getStringExtra(AppConstants.KEY_USER_ID)?:getString(R.string.empty_Extra)
     homeViewModel.updateUserId(userId)
   }
 
@@ -101,7 +98,7 @@ class HomeActivity : AppCompatActivity() {
     //listerner sur le bouton transfer
     binding.transfer.setOnClickListener {
       val intent = Intent(this@HomeActivity, TransferActivity::class.java)
-      intent.putExtra(EXTRA_ID_USER, homeViewModel.userId)
+      intent.putExtra(AppConstants.KEY_USER_ID, homeViewModel.userId)
       startTransferActivityForResult.launch(intent)}
   }
 
