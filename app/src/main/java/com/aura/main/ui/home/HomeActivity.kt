@@ -11,7 +11,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.coroutineScope
-import androidx.lifecycle.lifecycleScope
 import com.aura.R
 import com.aura.databinding.ActivityHomeBinding
 import com.aura.main.model.home.HomeLCE
@@ -19,12 +18,7 @@ import com.aura.main.ui.login.LoginActivity
 import com.aura.main.ui.transfer.TransferActivity
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.math.RoundingMode
 
 /**
