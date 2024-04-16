@@ -99,7 +99,7 @@ class TransferRepositoryTest {
     @Test
     fun `transfer - throws exception on others error`() = runTest {
         val transferRequest = TransferRequest("1234", "5678",300.0)
-        coEvery { mockApiService.transfer(transferRequest) } throws NetworkException.UnknownNetworkException()
+        coEvery { mockApiService.transfer(transferRequest) } throws NetworkException.UnknownNetworkException
         var exceptionThrown = false
         try {
             transferRepository.transfer(transferRequest)

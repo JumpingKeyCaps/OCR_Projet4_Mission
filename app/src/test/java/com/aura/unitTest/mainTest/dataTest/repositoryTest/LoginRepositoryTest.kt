@@ -94,7 +94,7 @@ class LoginRepositoryTest {
     @Test
     fun `login - throws exception on others error`() = runTest {
         val loginRequest = LoginRequest("1234", "p@sswOrd")
-        coEvery { mockApiService.login(loginRequest) } throws NetworkException.UnknownNetworkException()
+        coEvery { mockApiService.login(loginRequest) } throws NetworkException.UnknownNetworkException
         var exceptionThrown = false
         try {
             loginRepository.login(loginRequest)
