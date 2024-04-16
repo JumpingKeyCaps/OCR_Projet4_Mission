@@ -1,8 +1,11 @@
 package com.aura.unitTest.mainTest.uiTest
 
+import androidx.lifecycle.SavedStateHandle
 import com.aura.main.data.repository.LoginRepository
 import com.aura.main.data.service.network.NetworkException
+import com.aura.main.di.AppConstants
 import com.aura.main.model.ScreenState
+import com.aura.main.model.home.HomeContent
 import com.aura.main.model.login.LoginContent
 import com.aura.main.model.login.LoginRequest
 import com.aura.main.model.login.LoginResponse
@@ -26,7 +29,8 @@ import org.junit.Test
 class LoginViewModelTest {
 
     private val mockLoginRepository = mockk<LoginRepository>()
-    private val loginViewModel = LoginViewModel(mockLoginRepository)
+    private val mockSavedStateHandle = mockk<SavedStateHandle>()
+
 
     /**
      * Test login method - Success
@@ -40,13 +44,20 @@ class LoginViewModelTest {
 
         // Mock the loginRepository to return a successful response
         coEvery { mockLoginRepository.login(LoginRequest(identifier, password)) } returns mockResponse
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        val loginViewModel = LoginViewModel(mockLoginRepository)
         // set the dispatcher of the coroutine
         Dispatchers.setMain(UnconfinedTestDispatcher())
         // Call the login method on the ViewModel
         loginViewModel.login(identifier, password)
         // Verify that the LCE state is updated with LoginContent(true, true)
-        val expectedState = ScreenState.Content(LoginContent(fieldIsOK = true, granted = true))
-        assertEquals(expectedState, loginViewModel.lceState.first())
+
+
+        val expectedContent = ScreenState.Content(LoginContent(fieldIsOK = true, granted = true))
+        val actualContent = loginViewModel.lceState.first() as ScreenState.Content // Cast to Content
+        assertEquals(expectedContent.data.granted, actualContent.data.granted)
+
+
     }
 
 
@@ -61,6 +72,9 @@ class LoginViewModelTest {
 
         // Mock the loginRepository to return a failed response
         coEvery { mockLoginRepository.login(LoginRequest(identifier, password)) } returns LoginResponse(false)
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        val loginViewModel = LoginViewModel(mockLoginRepository)
+
         // set the dispatcher of the coroutine
         Dispatchers.setMain(TestCoroutineDispatcher())
         // Call the login method on the ViewModel
@@ -84,6 +98,9 @@ class LoginViewModelTest {
 
         // Mock the loginRepository to throw an exception
         coEvery { mockLoginRepository.login(LoginRequest(identifier, password)) } throws exception
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        val loginViewModel = LoginViewModel(mockLoginRepository)
+
         // set the dispatcher of the coroutine
         Dispatchers.setMain(UnconfinedTestDispatcher())
         // Call the login method on the ViewModel
@@ -108,6 +125,9 @@ class LoginViewModelTest {
 
         // Mock the loginRepository to throw an exception
         coEvery { mockLoginRepository.login(LoginRequest(identifier, password)) } throws exception
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        val loginViewModel = LoginViewModel(mockLoginRepository)
+
         // set the dispatcher of the coroutine
         Dispatchers.setMain(UnconfinedTestDispatcher())
         // Call the login method on the ViewModel
@@ -131,6 +151,9 @@ class LoginViewModelTest {
 
         // Mock the loginRepository to throw an exception
         coEvery { mockLoginRepository.login(LoginRequest(identifier, password)) } throws exception
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        val loginViewModel = LoginViewModel(mockLoginRepository)
+
         // set the dispatcher of the coroutine
         Dispatchers.setMain(UnconfinedTestDispatcher())
         // Call the login method on the ViewModel

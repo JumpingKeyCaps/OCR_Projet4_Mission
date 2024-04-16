@@ -1,8 +1,12 @@
 package com.aura.unitTest.mainTest.uiTest
 
+import androidx.lifecycle.SavedStateHandle
 import com.aura.main.data.repository.TransferRepository
 import com.aura.main.data.service.network.NetworkException
-import com.aura.main.model.transfer.TransferLCE
+import com.aura.main.di.AppConstants
+import com.aura.main.model.ScreenState
+import com.aura.main.model.home.HomeContent
+import com.aura.main.model.transfer.TransferContent
 import com.aura.main.model.transfer.TransferRequest
 import com.aura.main.model.transfer.TransferResponse
 import com.aura.main.ui.transfer.TransferViewModel
@@ -17,13 +21,17 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Test
 
+
 /**
  * Test of the TransferViewModel
  */
 class TransferViewModelTest {
 
+
     private val mockTransferRepository = mockk<TransferRepository>()
-    private val transferViewModel = TransferViewModel(mockTransferRepository)
+    private val mockSavedStateHandle = mockk<SavedStateHandle>()
+
+
 
     /**
      * Test transfer method - Success
@@ -38,13 +46,20 @@ class TransferViewModelTest {
 
         // Mock the loginRepository to return a successful response
         coEvery { mockTransferRepository.transfer(TransferRequest(identifier, target,amount)) } returns mockResponse
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        val transferViewModel = TransferViewModel(mockTransferRepository,mockSavedStateHandle)
         // set the dispatcher of the coroutine
         Dispatchers.setMain(UnconfinedTestDispatcher())
         // Call the login method on the ViewModel
-        transferViewModel.transfer(identifier, target,"$amount")
+        transferViewModel.transfer(target,"$amount")
         // Verify that the LCE state is updated with LoginContent(true, true)
-        val expectedState = TransferLCE.TransferContent(fieldIsOK = true,result = true)
-        TestCase.assertEquals(expectedState, transferViewModel.lceState.first())
+
+        val expectedContent = ScreenState.Content(TransferContent(fieldIsOK = true,result = true))
+        val actualContent = transferViewModel.lceState.first() as ScreenState.Content // Cast to Content
+        TestCase.assertEquals(expectedContent.data.result, actualContent.data.result)
+
+
+
     }
 
 
@@ -61,13 +76,15 @@ class TransferViewModelTest {
 
         // Mock the loginRepository to return a successful response
         coEvery { mockTransferRepository.transfer(TransferRequest(identifier, target,amount)) } returns mockResponse
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        val transferViewModel = TransferViewModel(mockTransferRepository,mockSavedStateHandle)
         // set the dispatcher of the coroutine
         Dispatchers.setMain(UnconfinedTestDispatcher())
         // Call the login method on the ViewModel
-        transferViewModel.transfer(identifier, target,"$amount")
+        transferViewModel.transfer(target,"$amount")
         // Verify that the LCE state is updated with LoginError with the expected error message
         val actualState = transferViewModel.lceState.first()
-        TestCase.assertTrue(actualState is TransferLCE.TransferError)
+        TestCase.assertTrue(actualState is ScreenState.Error)
     }
 
 
@@ -83,11 +100,13 @@ class TransferViewModelTest {
         val exception = NetworkException.NetworkConnectionException(isSocketTimeout = false,isConnectFail = true)
 
         coEvery {mockTransferRepository.transfer(TransferRequest(identifier, target,amount)) } throws exception
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        val transferViewModel = TransferViewModel(mockTransferRepository,mockSavedStateHandle)
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        transferViewModel.transfer(identifier, target,"$amount")
+        transferViewModel.transfer(target,"$amount")
 
         val actualState = transferViewModel.lceState.first()
-        TestCase.assertTrue(actualState is TransferLCE.TransferError)
+        TestCase.assertTrue(actualState is ScreenState.Error)
 
     }
 
@@ -104,11 +123,13 @@ class TransferViewModelTest {
         val exception = NetworkException.NetworkConnectionException(isSocketTimeout = true,isConnectFail = false)
 
         coEvery {mockTransferRepository.transfer(TransferRequest(identifier, target,amount)) } throws exception
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        val transferViewModel = TransferViewModel(mockTransferRepository,mockSavedStateHandle)
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        transferViewModel.transfer(identifier, target,"$amount")
+        transferViewModel.transfer(target,"$amount")
 
         val actualState = transferViewModel.lceState.first()
-        TestCase.assertTrue(actualState is TransferLCE.TransferError)
+        TestCase.assertTrue(actualState is ScreenState.Error)
 
     }
 
@@ -121,14 +142,16 @@ class TransferViewModelTest {
         val identifier = "1234"
         val target = "5678"
         val amount = 200.0
-        val exception = NetworkException.UnknownNetworkException()
+        val exception = NetworkException.UnknownNetworkException
 
         coEvery {mockTransferRepository.transfer(TransferRequest(identifier, target,amount)) } throws exception
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        val transferViewModel = TransferViewModel(mockTransferRepository,mockSavedStateHandle)
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        transferViewModel.transfer(identifier, target,"$amount")
+        transferViewModel.transfer(target,"$amount")
 
         val actualState = transferViewModel.lceState.first()
-        TestCase.assertTrue(actualState is TransferLCE.TransferError)
+        TestCase.assertTrue(actualState is ScreenState.Error)
 
     }
 

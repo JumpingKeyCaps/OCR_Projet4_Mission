@@ -1,13 +1,17 @@
 package com.aura.unitTest.mainTest.uiTest
 
+import androidx.lifecycle.SavedStateHandle
 import com.aura.main.data.repository.HomeRepository
 import com.aura.main.data.service.network.NetworkException
-import com.aura.main.model.home.HomeLCE
+import com.aura.main.di.AppConstants
+import com.aura.main.model.ScreenState
+import com.aura.main.model.home.HomeContent
 import com.aura.main.model.home.UserAccount
 import com.aura.main.ui.home.HomeViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase
+import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -22,7 +26,7 @@ import org.junit.Test
 class HomeViewModelTest {
 
     private val mockHomeRepository = mockk<HomeRepository>()
-    private val homeViewModel = HomeViewModel(mockHomeRepository)
+    private val mockSavedStateHandle = mockk<SavedStateHandle>()
 
 
     /**
@@ -37,13 +41,17 @@ class HomeViewModelTest {
 
         // Mock the loginRepository to return a successful response
         coEvery { mockHomeRepository.getUserAccounts(identifier) } returns expectedAccounts
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        val homeViewModel = HomeViewModel(mockHomeRepository,mockSavedStateHandle)
+
         // set the dispatcher of the coroutine
         Dispatchers.setMain(UnconfinedTestDispatcher())
         // Call the login method on the ViewModel
-        homeViewModel.getUserAccount(identifier)
+        homeViewModel.getUserAccount()
         // Verify that the LCE state is updated with LoginContent(true, true)
-        val expectedState = HomeLCE.HomeContent(2000.0)
-        TestCase.assertEquals(expectedState, homeViewModel.lceState.first())
+        val expectedContent = ScreenState.Content(HomeContent(2000.0))
+        val actualContent = homeViewModel.lceState.first() as ScreenState.Content // Cast to Content
+        assertEquals(expectedContent.data.userBalance, actualContent.data.userBalance)
     }
 
 
@@ -57,13 +65,16 @@ class HomeViewModelTest {
 
         // Mock the loginRepository to return a successful response
         coEvery { mockHomeRepository.getUserAccounts(identifier) } returns emptyList()
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        val homeViewModel = HomeViewModel(mockHomeRepository,mockSavedStateHandle)
+
         // set the dispatcher of the coroutine
         Dispatchers.setMain(UnconfinedTestDispatcher())
         // Call the login method on the ViewModel
-        homeViewModel.getUserAccount(identifier)
+        homeViewModel.getUserAccount()
         // Verify that the LCE state is updated with LoginError with the expected error message
         val actualState = homeViewModel.lceState.first()
-        TestCase.assertTrue(actualState is HomeLCE.HomeError)
+        TestCase.assertTrue(actualState is ScreenState.Error)
     }
 
 
@@ -78,12 +89,14 @@ class HomeViewModelTest {
         val exception = NetworkException.NetworkConnectionException(isSocketTimeout = false,isConnectFail = true)
 
         coEvery { mockHomeRepository.getUserAccounts(identifier) } throws exception
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        val homeViewModel = HomeViewModel(mockHomeRepository,mockSavedStateHandle)
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        homeViewModel.getUserAccount(identifier)
+        homeViewModel.getUserAccount()
 
         // Verify that the LCE state is updated with LoginError with a generic network error message
         val actualState = homeViewModel.lceState.first()
-        TestCase.assertTrue(actualState is HomeLCE.HomeError)
+        TestCase.assertTrue(actualState is ScreenState.Error)
 
     }
 
@@ -95,14 +108,15 @@ class HomeViewModelTest {
     fun `getUserAccount - throws NetworkException server down`() = runTest {
         val identifier = "1234"
         val exception = NetworkException.NetworkConnectionException(isSocketTimeout = true,isConnectFail = false)
-
         coEvery { mockHomeRepository.getUserAccounts(identifier) } throws exception
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        val homeViewModel = HomeViewModel(mockHomeRepository,mockSavedStateHandle)
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        homeViewModel.getUserAccount(identifier)
+        homeViewModel.getUserAccount()
 
         // Verify that the LCE state is updated with LoginError with a generic network error message
         val actualState = homeViewModel.lceState.first()
-        TestCase.assertTrue(actualState is HomeLCE.HomeError)
+        TestCase.assertTrue(actualState is ScreenState.Error)
 
     }
 
@@ -113,15 +127,16 @@ class HomeViewModelTest {
     @Test
     fun `getUserAccount - throws NetworkException others`() = runTest {
         val identifier = "1234"
-        val exception = NetworkException.UnknownNetworkException()
-
+        val exception = NetworkException.UnknownNetworkException
         coEvery { mockHomeRepository.getUserAccounts(identifier) } throws exception
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        val homeViewModel = HomeViewModel(mockHomeRepository,mockSavedStateHandle)
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        homeViewModel.getUserAccount(identifier)
+        homeViewModel.getUserAccount()
 
         // Verify that the LCE state is updated with LoginError with a generic network error message
         val actualState = homeViewModel.lceState.first()
-        TestCase.assertTrue(actualState is HomeLCE.HomeError)
+        TestCase.assertTrue(actualState is ScreenState.Error)
 
     }
 
