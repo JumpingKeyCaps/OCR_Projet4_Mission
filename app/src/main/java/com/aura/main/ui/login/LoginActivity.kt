@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresExtension
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.coroutineScope
+import com.aura.R
 import com.aura.databinding.ActivityLoginBinding
 import com.aura.main.model.login.LoginLCE
 import com.aura.main.ui.home.HomeActivity
@@ -107,7 +108,7 @@ class LoginActivity : AppCompatActivity(){
                 binding.login.isEnabled = false
                 val intent = Intent(this@LoginActivity, HomeActivity::class.java)
                 //add user ID to the intent extra
-                intent.putExtra("userId", binding.identifier.text.toString())
+                intent.putExtra(getString(R.string.user_id_Extra), binding.identifier.text.toString())
                 startActivity(intent)
                 finish()
               }else{
