@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.aura.R
 import com.aura.main.data.repository.HomeRepository
 import com.aura.main.data.service.network.NetworkException
+import com.aura.main.di.AppConstants
 import com.aura.main.model.home.HomeLCE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,10 +27,6 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
      */
     var userId: String
 
-    companion object {
-        /**  Key for savedStateHandle */
-        const val ID_USER = "userId"
-    }
 
 
     /** The Home LCE Stateflow. */
@@ -37,15 +34,23 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     val lceState: StateFlow<HomeLCE> = _lceState
 
 
-
+    /**
+     * Initialisation du ViewModel
+     */
     init {
-        val savedUserId = savedStateHandle.get<String>(ID_USER) ?: ""
+        val savedUserId = savedStateHandle.get<String>(AppConstants.KEY_USER_ID) ?: ""
         userId = savedUserId
     }
 
+
+    /**
+     * Method to update the userId ans save it in the savedStateHandle.
+     *
+     * @param userId the new userid to update.
+     */
     fun updateUserId(userId: String) {
         this.userId = userId
-        savedStateHandle[ID_USER] = userId
+        savedStateHandle[AppConstants.KEY_USER_ID] = userId
     }
 
 
