@@ -12,7 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.coroutineScope
 import com.aura.databinding.ActivityLoginBinding
 import com.aura.main.di.AppConstants
-import com.aura.main.model.login.LoginLCE
+import com.aura.main.model.ScreenState
+import com.aura.main.model.login.LoginContent
 import com.aura.main.ui.home.HomeActivity
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -92,19 +93,19 @@ class LoginActivity : AppCompatActivity(){
       loginViewModel.lceState.collect { state ->
         when (state) {
 
-          is LoginLCE.LoginLoading -> {
-            Snackbar.make(binding.root,state.loadingMessage , Snackbar.LENGTH_SHORT).show()
+          is ScreenState.Loading -> {
+            Snackbar.make(binding.root,state.message , Snackbar.LENGTH_SHORT).show()
             binding.loading.visibility = View.VISIBLE
             binding.login.isEnabled = false
             binding.identifier.clearFocus()
             binding.password.clearFocus()
           }
 
-          is LoginLCE.LoginContent -> {
+          is ScreenState.Content<LoginContent> -> {
             binding.loading.visibility = View.GONE
             //FIELDS OK !
-            if(state.fieldIsOK){
-              if(state.granted){
+            if(state.data.fieldIsOK){
+              if(state.data.granted){
                 //SUCCESS LOGIN !
                 binding.login.isEnabled = false
                 val intent = Intent(this@LoginActivity, HomeActivity::class.java)
@@ -123,8 +124,8 @@ class LoginActivity : AppCompatActivity(){
           }
 
 
-          is LoginLCE.LoginError -> {
-            Snackbar.make(binding.root,state.errorMessage , Snackbar.LENGTH_LONG).show()
+          is ScreenState.Error -> {
+            Snackbar.make(binding.root,state.message , Snackbar.LENGTH_LONG).show()
             binding.loading.visibility = View.GONE
             binding.login.isEnabled = true
           }
