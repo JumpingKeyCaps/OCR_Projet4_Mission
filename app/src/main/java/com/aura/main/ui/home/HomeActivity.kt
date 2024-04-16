@@ -43,7 +43,7 @@ class HomeActivity : AppCompatActivity() {
    */
   private val startTransferActivityForResult =
     registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-      if (result.resultCode == Activity.RESULT_OK) getUserAccount(userId)
+      if (result.resultCode == Activity.RESULT_OK) getUserAccount()
     }
 
   /**
@@ -51,10 +51,7 @@ class HomeActivity : AppCompatActivity() {
    */
   private val homeViewModel: HomeViewModel by viewModels()
 
-  /**
-   * The user Id
-   */
-  private lateinit var userId: String
+
 
 
   /**
@@ -78,7 +75,7 @@ class HomeActivity : AppCompatActivity() {
     homeUiUpdater()
 
     //call to get the get useraccount
-    getUserAccount(userId)
+    getUserAccount()
   }
 
 
@@ -87,8 +84,10 @@ class HomeActivity : AppCompatActivity() {
    */
   private fun getUserId(){
     //on recup l'id user dans le extra de l'intent
-    userId = intent.getStringExtra("userId")?:""
+    val userId = intent.getStringExtra(getString(R.string.user_id_Extra))?:getString(R.string.empty_Extra)
+    homeViewModel.updateUserId(userId)
   }
+
 
 
   /**
@@ -96,22 +95,21 @@ class HomeActivity : AppCompatActivity() {
    */
   private fun setupViewsListener(){
     //listener sur le bouton try again
-    binding.tryAgainButton.setOnClickListener { getUserAccount(userId)}
+    binding.tryAgainButton.setOnClickListener { getUserAccount()}
 
     //listerner sur le bouton transfer
     binding.transfer.setOnClickListener {
       val intent = Intent(this@HomeActivity, TransferActivity::class.java)
-      intent.putExtra("userId", userId)
+      intent.putExtra(getString(R.string.user_id_Extra), homeViewModel.userId)
       startTransferActivityForResult.launch(intent)}
   }
 
   /**
    * Method to get the user account.
    *
-   * @param iduser the ID of the user.
    */
-  private fun getUserAccount(iduser: String){
-    homeViewModel.getUserAccount(iduser)
+  private fun getUserAccount(){
+    homeViewModel.getUserAccount()
   }
 
   /**
