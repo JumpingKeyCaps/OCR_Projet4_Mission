@@ -5,7 +5,6 @@ import com.aura.main.data.repository.TransferRepository
 import com.aura.main.data.service.network.NetworkException
 import com.aura.main.di.AppConstants
 import com.aura.main.model.ScreenState
-import com.aura.main.model.home.HomeContent
 import com.aura.main.model.transfer.TransferContent
 import com.aura.main.model.transfer.TransferRequest
 import com.aura.main.model.transfer.TransferResponse
@@ -46,7 +45,7 @@ class TransferViewModelTest {
 
         // Mock the loginRepository to return a successful response
         coEvery { mockTransferRepository.transfer(TransferRequest(identifier, target,amount)) } returns mockResponse
-        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.Keys.KEY_USER_ID) } returns identifier
         val transferViewModel = TransferViewModel(mockTransferRepository,mockSavedStateHandle)
         // set the dispatcher of the coroutine
         Dispatchers.setMain(UnconfinedTestDispatcher())
@@ -76,7 +75,7 @@ class TransferViewModelTest {
 
         // Mock the loginRepository to return a successful response
         coEvery { mockTransferRepository.transfer(TransferRequest(identifier, target,amount)) } returns mockResponse
-        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.Keys.KEY_USER_ID) } returns identifier
         val transferViewModel = TransferViewModel(mockTransferRepository,mockSavedStateHandle)
         // set the dispatcher of the coroutine
         Dispatchers.setMain(UnconfinedTestDispatcher())
@@ -100,7 +99,7 @@ class TransferViewModelTest {
         val exception = NetworkException.NetworkConnectionException(isSocketTimeout = false,isConnectFail = true)
 
         coEvery {mockTransferRepository.transfer(TransferRequest(identifier, target,amount)) } throws exception
-        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.Keys.KEY_USER_ID) } returns identifier
         val transferViewModel = TransferViewModel(mockTransferRepository,mockSavedStateHandle)
         Dispatchers.setMain(UnconfinedTestDispatcher())
         transferViewModel.transfer(target,"$amount")
@@ -123,7 +122,7 @@ class TransferViewModelTest {
         val exception = NetworkException.NetworkConnectionException(isSocketTimeout = true,isConnectFail = false)
 
         coEvery {mockTransferRepository.transfer(TransferRequest(identifier, target,amount)) } throws exception
-        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.Keys.KEY_USER_ID) } returns identifier
         val transferViewModel = TransferViewModel(mockTransferRepository,mockSavedStateHandle)
         Dispatchers.setMain(UnconfinedTestDispatcher())
         transferViewModel.transfer(target,"$amount")
@@ -145,7 +144,7 @@ class TransferViewModelTest {
         val exception = NetworkException.UnknownNetworkException
 
         coEvery {mockTransferRepository.transfer(TransferRequest(identifier, target,amount)) } throws exception
-        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.Keys.KEY_USER_ID) } returns identifier
         val transferViewModel = TransferViewModel(mockTransferRepository,mockSavedStateHandle)
         Dispatchers.setMain(UnconfinedTestDispatcher())
         transferViewModel.transfer(target,"$amount")

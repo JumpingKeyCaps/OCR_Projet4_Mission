@@ -41,7 +41,7 @@ class HomeViewModelTest {
 
         // Mock the loginRepository to return a successful response
         coEvery { mockHomeRepository.getUserAccounts(identifier) } returns expectedAccounts
-        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.Keys.KEY_USER_ID) } returns identifier
         val homeViewModel = HomeViewModel(mockHomeRepository,mockSavedStateHandle)
 
         // set the dispatcher of the coroutine
@@ -65,7 +65,7 @@ class HomeViewModelTest {
 
         // Mock the loginRepository to return a successful response
         coEvery { mockHomeRepository.getUserAccounts(identifier) } returns emptyList()
-        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.Keys.KEY_USER_ID) } returns identifier
         val homeViewModel = HomeViewModel(mockHomeRepository,mockSavedStateHandle)
 
         // set the dispatcher of the coroutine
@@ -89,7 +89,7 @@ class HomeViewModelTest {
         val exception = NetworkException.NetworkConnectionException(isSocketTimeout = false,isConnectFail = true)
 
         coEvery { mockHomeRepository.getUserAccounts(identifier) } throws exception
-        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.Keys.KEY_USER_ID) } returns identifier
         val homeViewModel = HomeViewModel(mockHomeRepository,mockSavedStateHandle)
         Dispatchers.setMain(UnconfinedTestDispatcher())
         homeViewModel.getUserAccount()
@@ -109,7 +109,7 @@ class HomeViewModelTest {
         val identifier = "1234"
         val exception = NetworkException.NetworkConnectionException(isSocketTimeout = true,isConnectFail = false)
         coEvery { mockHomeRepository.getUserAccounts(identifier) } throws exception
-        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.Keys.KEY_USER_ID) } returns identifier
         val homeViewModel = HomeViewModel(mockHomeRepository,mockSavedStateHandle)
         Dispatchers.setMain(UnconfinedTestDispatcher())
         homeViewModel.getUserAccount()
@@ -129,7 +129,7 @@ class HomeViewModelTest {
         val identifier = "1234"
         val exception = NetworkException.UnknownNetworkException
         coEvery { mockHomeRepository.getUserAccounts(identifier) } throws exception
-        coEvery { mockSavedStateHandle.get<String>(AppConstants.KEY_USER_ID) } returns identifier
+        coEvery { mockSavedStateHandle.get<String>(AppConstants.Keys.KEY_USER_ID) } returns identifier
         val homeViewModel = HomeViewModel(mockHomeRepository,mockSavedStateHandle)
         Dispatchers.setMain(UnconfinedTestDispatcher())
         homeViewModel.getUserAccount()
