@@ -7,7 +7,8 @@ import com.aura.R
 import com.aura.main.data.repository.TransferRepository
 import com.aura.main.data.service.network.NetworkException
 import com.aura.main.di.AppConstants
-import com.aura.main.model.transfer.TransferLCE
+import com.aura.main.model.ScreenState
+import com.aura.main.model.transfer.TransferContent
 import com.aura.main.model.transfer.TransferRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,8 +26,8 @@ class TransferViewModel @Inject constructor(private val transferRepository: Tran
     private var userId: String
 
     /** The Transfer LCE Stateflow. */
-    private val _lceState = MutableStateFlow<TransferLCE>(TransferLCE.TransferContent(fieldIsOK = false, result = false))
-    val lceState: StateFlow<TransferLCE> = _lceState
+    private val _lceState = MutableStateFlow<ScreenState<TransferContent>>(ScreenState.Content(TransferContent(fieldIsOK = false, result = false)))
+    val lceState: StateFlow<ScreenState<TransferContent>> = _lceState
 
 
     /**
@@ -60,14 +61,14 @@ class TransferViewModel @Inject constructor(private val transferRepository: Tran
             try{
                 amount.toDouble()
                 //champ de saisie Ok !
-                _lceState.value = TransferLCE.TransferContent(fieldIsOK = true, result = false)
+                _lceState.value = ScreenState.Content(TransferContent(fieldIsOK = true, result = false))
             }catch (e:NumberFormatException ){
                 //champ de saisie manquant
-                _lceState.value = TransferLCE.TransferError(R.string.transfer_conn_error_amount)
+                _lceState.value = ScreenState.Content(TransferContent(fieldIsOK = false, result = false))
             }
         } else {
             //champ de saisie manquant
-            _lceState.value = TransferLCE.TransferError(R.string.transfer_conn_error_missingfields)
+            _lceState.value = ScreenState.Content(TransferContent(fieldIsOK = false, result = false))
         }
     }
 
@@ -81,27 +82,27 @@ class TransferViewModel @Inject constructor(private val transferRepository: Tran
     fun transfer(receiverId: String, amount: String) {
         // Use viewModelScope for coroutines related to the Activity lifecycle
         viewModelScope.launch {
-            _lceState.value = TransferLCE.TransferLoading(R.string.transfer_conn_loading)
+            _lceState.value = ScreenState.Loading(R.string.transfer_conn_loading)
             try {
                 val transferResponse = transferRepository.transfer(TransferRequest(userId, receiverId,amount.toDouble()))
 
                 if(transferResponse.result){
                     // transfert accepted !
-                    _lceState.value = TransferLCE.TransferContent(fieldIsOK = true, result = true)
+                    _lceState.value = ScreenState.Content(TransferContent(fieldIsOK = true, result = true))
                 }else{
                     //transfer refused.
-                    _lceState.value = TransferLCE.TransferError(R.string.transfer_conn_fail)
+                    _lceState.value = ScreenState.Error(R.string.transfer_conn_fail)
                 }
             } catch (e: Exception) {
                 // Handle network errors, server errors, etc.
                 when (e) {
-                    is NetworkException.ServerErrorException ->{_lceState.value = TransferLCE.TransferError(R.string.conn_error_server_spe)}
+                    is NetworkException.ServerErrorException ->{_lceState.value = ScreenState.Error(R.string.conn_error_server_spe)}
                     is NetworkException.NetworkConnectionException  ->{
-                        if(e.isSocketTimeout) _lceState.value = TransferLCE.TransferError(R.string.transfer_conn_error_server)
-                        if(e.isConnectFail) _lceState.value = TransferLCE.TransferError(R.string.transfer_conn_error_network)
+                        if(e.isSocketTimeout) _lceState.value = ScreenState.Error(R.string.transfer_conn_error_server)
+                        if(e.isConnectFail) _lceState.value = ScreenState.Error(R.string.transfer_conn_error_network)
                     }
-                    is NetworkException.UnknownNetworkException  ->{ _lceState.value = TransferLCE.TransferError(R.string.conn_error_network_generik)}
-                    else -> { _lceState.value = TransferLCE.TransferError(R.string.transfer_conn_error_generik)} // other case of error for login
+                    is NetworkException.UnknownNetworkException  ->{ _lceState.value = ScreenState.Error(R.string.transfer_conn_fail)}
+                    else -> { _lceState.value = ScreenState.Error(R.string.transfer_conn_error_generik)} // other case of error for login
                 }
             }
         }
