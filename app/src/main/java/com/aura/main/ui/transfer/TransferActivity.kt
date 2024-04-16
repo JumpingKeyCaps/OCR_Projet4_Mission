@@ -11,7 +11,8 @@ import androidx.lifecycle.coroutineScope
 import com.aura.R
 import com.aura.databinding.ActivityTransferBinding
 import com.aura.main.di.AppConstants
-import com.aura.main.model.transfer.TransferLCE
+import com.aura.main.model.ScreenState
+import com.aura.main.model.transfer.TransferContent
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -104,7 +105,7 @@ class TransferActivity : AppCompatActivity() {
       transferViewModel.lceState.collect { state ->
         when (state) {
 
-          is TransferLCE.TransferLoading -> {
+          is ScreenState.Loading -> {
             Snackbar.make(binding.root,state.message , Snackbar.LENGTH_SHORT).show()
             binding.loading.visibility = View.VISIBLE
             binding.transfer.isEnabled = false
@@ -112,11 +113,11 @@ class TransferActivity : AppCompatActivity() {
             binding.recipient.clearFocus()
           }
 
-          is TransferLCE.TransferContent -> {
+          is ScreenState.Content<TransferContent> -> {
             binding.loading.visibility = View.GONE
             //FIELDS OK !
-            if(state.fieldIsOK){
-              if(state.result){
+            if(state.data.fieldIsOK){
+              if(state.data.result){
                 //SUCCESS Transfer !
                 binding.transfer.isEnabled = false
                 setResult(Activity.RESULT_OK)
@@ -131,8 +132,8 @@ class TransferActivity : AppCompatActivity() {
             }
           }
 
-          is TransferLCE.TransferError -> {
-            Snackbar.make(binding.root,state.errorMessage , Snackbar.LENGTH_LONG).show()
+          is ScreenState.Error -> {
+            Snackbar.make(binding.root,state.message , Snackbar.LENGTH_LONG).show()
             binding.loading.visibility = View.GONE
             binding.transfer.isEnabled = true
           }
