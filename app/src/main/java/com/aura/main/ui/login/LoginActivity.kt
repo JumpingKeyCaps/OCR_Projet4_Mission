@@ -110,7 +110,7 @@ class LoginActivity : AppCompatActivity(){
                 binding.login.isEnabled = false
                 val intent = Intent(this@LoginActivity, HomeActivity::class.java)
                 //add user ID to the intent extra
-                intent.putExtra(AppConstants.KEY_USER_ID, binding.identifier.text.toString())
+                intent.putExtra(AppConstants.Keys.KEY_USER_ID, binding.identifier.text.toString())
                 startActivity(intent)
                 finish()
               }else{
