@@ -34,7 +34,7 @@ class TransferViewModel @Inject constructor(private val transferRepository: Tran
      * Initialisation du ViewModel
      */
     init {
-        val savedUserId = savedStateHandle.get<String>(AppConstants.KEY_USER_ID) ?: ""
+        val savedUserId = savedStateHandle.get<String>(AppConstants.Keys.KEY_USER_ID) ?: ""
         userId = savedUserId
     }
 
@@ -45,7 +45,7 @@ class TransferViewModel @Inject constructor(private val transferRepository: Tran
      */
     fun updateUserId(userId: String) {
         this.userId = userId
-        savedStateHandle[AppConstants.KEY_USER_ID] = userId
+        savedStateHandle[AppConstants.Keys.KEY_USER_ID] = userId
     }
 
 
