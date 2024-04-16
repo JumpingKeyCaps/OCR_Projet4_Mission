@@ -105,7 +105,7 @@ class HomeRepositoryTest {
     @Test
     fun `getUserAccounts - throws exception on others error`() = runTest {
         val userID = "1234"
-        coEvery { mockApiService.getUserAccounts(userID) } throws NetworkException.UnknownNetworkException()
+        coEvery { mockApiService.getUserAccounts(userID) } throws NetworkException.UnknownNetworkException
         var exceptionThrown = false
         try {
             homeRepository.getUserAccounts(userID)
