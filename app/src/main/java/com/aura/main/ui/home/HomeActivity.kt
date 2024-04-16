@@ -14,7 +14,8 @@ import androidx.lifecycle.coroutineScope
 import com.aura.R
 import com.aura.databinding.ActivityHomeBinding
 import com.aura.main.di.AppConstants
-import com.aura.main.model.home.HomeLCE
+import com.aura.main.model.ScreenState
+import com.aura.main.model.home.HomeContent
 import com.aura.main.ui.login.LoginActivity
 import com.aura.main.ui.transfer.TransferActivity
 import com.google.android.material.snackbar.Snackbar
@@ -118,8 +119,8 @@ class HomeActivity : AppCompatActivity() {
       homeViewModel.lceState.collect{ state ->
         when (state) {
 
-          is HomeLCE.HomeLoading -> {
-            Snackbar.make(binding.root,state.loadingMessage , Snackbar.LENGTH_SHORT).show()
+          is ScreenState.Loading -> {
+            Snackbar.make(binding.root,state.message , Snackbar.LENGTH_SHORT).show()
             binding.loadingHome.visibility = View.VISIBLE
             binding.title.visibility = View.GONE
             binding.balance.visibility = View.GONE
@@ -128,8 +129,8 @@ class HomeActivity : AppCompatActivity() {
             binding.transfer.isEnabled = false
           }
 
-          is HomeLCE.HomeContent -> {
-            binding.balance.text = "${state.userBalance.toBigDecimal().setScale(2, RoundingMode.UP).toDouble()}"
+          is ScreenState.Content<HomeContent> -> {
+            binding.balance.text = "${state.data.userBalance.toBigDecimal().setScale(2, RoundingMode.UP).toDouble()}"
             binding.title.visibility = View.VISIBLE
             binding.balance.visibility = View.VISIBLE
             binding.loadingHome.visibility = View.GONE
@@ -138,8 +139,8 @@ class HomeActivity : AppCompatActivity() {
             binding.transfer.isEnabled = true
           }
 
-          is HomeLCE.HomeError -> {
-            Snackbar.make(binding.root,state.errorMessage , Snackbar.LENGTH_LONG).show()
+          is ScreenState.Error -> {
+            Snackbar.make(binding.root,state.message , Snackbar.LENGTH_LONG).show()
             binding.title.visibility = View.GONE
             binding.balance.visibility = View.GONE
             binding.loadingHome.visibility = View.GONE
