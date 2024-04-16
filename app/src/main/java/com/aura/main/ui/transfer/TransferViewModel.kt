@@ -24,10 +24,11 @@ class TransferViewModel @Inject constructor(private val transferRepository: Tran
      * The user Id
      */
     var userId: String
-    /**
-     * The user key ref
-     */
-    private val IDUSER = "userId"
+
+    companion object {
+        /**  Key for savedStateHandle */
+        const val ID_USER = "userId"
+    }
 
     /** The Transfer LCE Stateflow. */
     private val _lceState = MutableStateFlow<TransferLCE>(TransferLCE.TransferContent(fieldIsOK = false, result = false))
@@ -37,13 +38,13 @@ class TransferViewModel @Inject constructor(private val transferRepository: Tran
 
 
     init {
-        val savedUserId = savedStateHandle.get<String>(IDUSER) ?: ""
+        val savedUserId = savedStateHandle.get<String>(ID_USER) ?: ""
         userId = savedUserId
     }
 
     fun updateUserId(userId: String) {
         this.userId = userId
-        savedStateHandle[IDUSER] = userId
+        savedStateHandle[ID_USER] = userId
     }
 
 

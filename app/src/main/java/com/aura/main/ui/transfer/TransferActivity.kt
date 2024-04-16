@@ -21,6 +21,13 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class TransferActivity : AppCompatActivity() {
 
+
+  companion object {
+    /**  Key for IntentExtra */
+    const val EXTRA_ID_USER = "userId"
+  }
+
+
   /**
    * The binding for the transfer layout.
    */
@@ -73,7 +80,7 @@ class TransferActivity : AppCompatActivity() {
    */
   private fun getUserId(){
     //on recup l'id user dans le extra de l'intent
-    val userId = intent.getStringExtra(getString(R.string.user_id_Extra))?:getString(R.string.empty_Extra)
+    val userId = intent.getStringExtra(EXTRA_ID_USER)?:getString(R.string.empty_Extra)
     transferViewModel.updateUserId(userId)
   }
 
