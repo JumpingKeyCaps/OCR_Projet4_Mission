@@ -1,5 +1,6 @@
 package com.aura.main.ui.transfer
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aura.R
@@ -17,11 +18,34 @@ import javax.inject.Inject
  * The ViewModel for the Transfer Activity.  Inject the repository dependency in the constructor
  */
 @HiltViewModel
-class TransferViewModel @Inject constructor(private val transferRepository: TransferRepository) : ViewModel()  {
+class TransferViewModel @Inject constructor(private val transferRepository: TransferRepository, private val savedStateHandle: SavedStateHandle) : ViewModel()  {
+
+    /**
+     * The user Id
+     */
+    var userId: String
+    /**
+     * The user key ref
+     */
+    private val IDUSER = "userId"
 
     /** The Transfer LCE Stateflow. */
     private val _lceState = MutableStateFlow<TransferLCE>(TransferLCE.TransferContent(fieldIsOK = false, result = false))
     val lceState: StateFlow<TransferLCE> = _lceState
+
+
+
+
+    init {
+        val savedUserId = savedStateHandle.get<String>(IDUSER) ?: ""
+        userId = savedUserId
+    }
+
+    fun updateUserId(userId: String) {
+        this.userId = userId
+        savedStateHandle[IDUSER] = userId
+    }
+
 
 
     /**
@@ -50,16 +74,15 @@ class TransferViewModel @Inject constructor(private val transferRepository: Tran
     /**
      * Method to Transfer the user money.
      *
-     * @param senderId the Id of the user.
      * @param receiverId the target account Id.
      * @param amount the money to transfer.
      */
-    fun transfer(senderId: String, receiverId: String, amount: String) {
+    fun transfer(receiverId: String, amount: String) {
         // Use viewModelScope for coroutines related to the Activity lifecycle
         viewModelScope.launch {
             _lceState.value = TransferLCE.TransferLoading(R.string.transfer_conn_loading)
             try {
-                val transferResponse = transferRepository.transfer(TransferRequest(senderId, receiverId,amount.toDouble()))
+                val transferResponse = transferRepository.transfer(TransferRequest(userId, receiverId,amount.toDouble()))
 
                 if(transferResponse.result){
                     // transfert accepted !
