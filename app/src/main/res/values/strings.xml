@@ -50,4 +50,9 @@
   <!-- bouton retry -->
   <string name="try_againButton">Retry</string>
 
+
+  <!--Intent extra keys -->
+  <string name="user_id_Extra">userId</string>
+  <string name="empty_Extra"> </string>
+
 </resources>
