@@ -30,8 +30,6 @@ import java.math.RoundingMode
 class HomeActivity : AppCompatActivity() {
 
 
-
-
   /**
    * The binding for the home layout.
    */
@@ -64,8 +62,8 @@ class HomeActivity : AppCompatActivity() {
     binding = ActivityHomeBinding.inflate(layoutInflater)
     setContentView(binding.root)
 
-    //retrieve the user ID
-    getUserId()
+    //Update the ViewModel userId with the retrieved one from intent extra
+    homeViewModel.updateUserId(intent.getStringExtra(AppConstants.KEY_USER_ID)?:getString(R.string.empty_Extra))
 
     //Setup the listeners
     setupViewsListener()
@@ -76,17 +74,6 @@ class HomeActivity : AppCompatActivity() {
     //call to get the get useraccount
     getUserAccount()
   }
-
-
-  /**
-   * Method to retrieve the user Id from the intent
-   */
-  private fun getUserId(){
-    //on recup l'id user dans le extra de l'intent
-    val userId = intent.getStringExtra(AppConstants.KEY_USER_ID)?:getString(R.string.empty_Extra)
-    homeViewModel.updateUserId(userId)
-  }
-
 
 
   /**
