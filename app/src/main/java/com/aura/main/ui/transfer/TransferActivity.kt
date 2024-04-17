@@ -61,8 +61,6 @@ class TransferActivity : AppCompatActivity() {
     binding = ActivityTransferBinding.inflate(layoutInflater)
     setContentView(binding.root)
 
-    //Update the ViewModel userId with the retrieved one from intent extra
-    transferViewModel.updateUserId(intent.getStringExtra(AppConstants.Keys.KEY_USER_ID)?:getString(R.string.empty_Extra))
 
     //Setup all listeners
     setupViewListeners()
