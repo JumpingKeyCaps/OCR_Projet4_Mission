@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("com.android.application")
@@ -35,7 +35,10 @@ android {
   }
   kotlinOptions {
     jvmTarget = "17"
+    languageVersion = "1.9"
   }
+
+
   buildFeatures {
     viewBinding = true
   }
@@ -76,3 +79,4 @@ dependencies {
   testImplementation ("io.mockk:mockk:1.13.2")
   testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
 }
+
