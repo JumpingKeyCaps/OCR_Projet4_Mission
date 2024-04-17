@@ -62,8 +62,7 @@ class HomeActivity : AppCompatActivity() {
     binding = ActivityHomeBinding.inflate(layoutInflater)
     setContentView(binding.root)
 
-    //Update the ViewModel userId with the retrieved one from intent extra
-    homeViewModel.updateUserId(intent.getStringExtra(AppConstants.Keys.KEY_USER_ID)?:getString(R.string.empty_Extra))
+
 
     //Setup the listeners
     setupViewsListener()
@@ -86,7 +85,7 @@ class HomeActivity : AppCompatActivity() {
     //listerner sur le bouton transfer
     binding.transfer.setOnClickListener {
       val intent = Intent(this@HomeActivity, TransferActivity::class.java)
-      intent.putExtra(AppConstants.Keys.KEY_USER_ID, homeViewModel.userId)
+      intent.putExtra(AppConstants.KEY_USER_ID, homeViewModel.userId)
       startTransferActivityForResult.launch(intent)}
   }
 
