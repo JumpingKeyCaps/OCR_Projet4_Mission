@@ -34,20 +34,9 @@ class TransferViewModel @Inject constructor(private val transferRepository: Tran
      * Initialisation du ViewModel
      */
     init {
-        val savedUserId = savedStateHandle.get<String>(AppConstants.Keys.KEY_USER_ID) ?: ""
+        val savedUserId = savedStateHandle.get<String>(AppConstants.KEY_USER_ID) ?: ""
         userId = savedUserId
     }
-
-    /**
-     * Method to update the userId ans save it in the savedStateHandle.
-     *
-     * @param userId the new userid to update.
-     */
-    fun updateUserId(userId: String) {
-        this.userId = userId
-        savedStateHandle[AppConstants.Keys.KEY_USER_ID] = userId
-    }
-
 
 
     /**
